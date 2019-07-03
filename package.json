@@ -1,0 +1,21 @@
+{
+  "name": "teamcontrol",
+  "version": "0.0.1",
+  "description": "Remote Control Application based on WebRTC & Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/gonnavis/TeamControl",
+  "keywords": [
+    "remotecontrol",
+    "webrtc",
+    "electron",
+    "robotjs",
+    "rtcmulticonnection"
+  ],
+  "author": "gonnavis",
+  "devDependencies": {
+    "electron": "^5.0.5"
+  }
+}
