@@ -1,19 +1,17 @@
-// In the renderer process.
+
+// https://electronjs.org/docs/api/desktop-capturer
+
 const {
   desktopCapturer
 } = require('electron')
 
 console.log(1)
 desktopCapturer.getSources({
-  types: ['window', 'screen']
+  types: ['screen']
 }).then(async sources => {
   console.log(2)
   const stream = await navigator.mediaDevices.getUserMedia({
-    audio: {
-      mandatory: {
-        chromeMediaSource: 'desktop'
-      }
-    },
+    audio: false,
     video: {
       mandatory: {
         chromeMediaSource: 'desktop'
