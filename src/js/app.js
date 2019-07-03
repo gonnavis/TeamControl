@@ -35,6 +35,11 @@ function handleStream(stream) {
     video: true,
     oneway: true,
   };
+  connection.bandwidth = {
+    audio: 50, // 50 kbps
+    video: 256, // 256 kbps
+    screen: 300 // 300 kbps
+  };
   setTimeout(()=>{
     connection.attachStreams[0]=stream
   }, 5000)
