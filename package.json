@@ -17,5 +17,8 @@
   "author": "gonnavis",
   "devDependencies": {
     "electron": "^5.0.5"
+  },
+  "dependencies": {
+    "socket.io": "^2.2.0"
   }
 }

@@ -6,8 +6,6 @@ const {
 
 // import electron from 'electron'
 
-var camera_streamid
-
 console.log(1)
 desktopCapturer.getSources({
   types: ['screen']
@@ -25,20 +23,16 @@ desktopCapturer.getSources({
 })
 
 function handleStream(stream) {
+  video.srcObject = stream
 
-  var connection = window.connection = new RTCMultiConnection();
-  // connection.dontAttachStream=true
-  connection.dontCaptureUserMedia=true
+  var connection = new RTCMultiConnection();
   connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
-  connection.session = {
-    audio: false,
-    video: true,
-    oneway: true,
-  };
-  setTimeout(()=>{
-    connection.attachStreams[0]=stream
-  }, 5000)
-  connection.open('gonnavis');
+  // connection.session = {
+  //   audio: false,
+  //   video: true
+  // };
+  // connection.addStream(stream)
+  connection.open('gonnavisfasdfasdf');
 }
 
 function handleError(e) {
