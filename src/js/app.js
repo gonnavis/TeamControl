@@ -3,6 +3,7 @@
 const {
   desktopCapturer
 } = require('electron')
+const robot=require('robotjs')
 
 // import electron from 'electron'
 
@@ -72,6 +73,14 @@ connection_data.session = {
 
 connection_data.onmessage = function (event) {
   console.log('****** msg: ', event.data)
+  let msg = JSON.parse(event.data)
+  if (msg.x !== undefined) {
+    robot.moveMouse(msg.x * screenSize.width, msg.y * screenSize.height);
+  }
+
+  if (msg.click) {
+    robot.mouseClick()
+  }
 };
 
 connection_data.open('gonnavis_data');
