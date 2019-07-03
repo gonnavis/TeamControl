@@ -49,34 +49,3 @@ function handleStream(stream) {
 function handleError(e) {
   console.log(e)
 }
-
-
-
-
-
-
-
-
-
-
-
-var connection_data = new RTCMultiConnection();
-
-// this line is VERY_important
-connection_data.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
-
-// if you want text chat
-connection_data.session = {
-  data: true
-};
-
-connection_data.onmessage = function (event) {
-  console.log('****** msg: ', event.data)
-};
-
-connection_data.open('gonnavis_data');
-
-
-
-
-
