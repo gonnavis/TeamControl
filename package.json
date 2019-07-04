@@ -1,7 +1,7 @@
 {
   "name": "teamcontrol",
   "version": "0.0.1",
-  "description": "Remote Control Application based on WebRTC & Electron",
+  "description": "Remote Control Application based on WebRTC",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -19,6 +19,7 @@
     "electron": "^5.0.5"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "robotjs": "^0.5.1",
     "socket.io": "^2.2.0"
   }
