@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
+    "open": "^6.4.0",
     "robotjs": "^0.5.1",
     "socket.io": "^2.2.0"
   }

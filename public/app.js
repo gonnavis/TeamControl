@@ -45,7 +45,7 @@ connection_data.session = {
 };
 
 connection_data.onmessage = function (event) {
-  console.log('****** msg: ', event.data)
+  // console.log('****** msg: ', event.data)
   socket.emit('chat message', event.data);
 };
 

@@ -7,6 +7,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 const robot = require('robotjs')
 var screenSize = robot.getScreenSize();
+const open = require('open');
 
 
 app.get('/', function (req, res) {
@@ -16,7 +17,7 @@ app.get('/', function (req, res) {
 io.on('connection', function (socket) {
   console.log('a user connected');
   socket.on('chat message', function (msg) {
-    console.log('message: ' + msg);
+    // console.log('message: ' + msg);
     msg = JSON.parse(msg)
     if (msg.x !== undefined) {
       robot.moveMouse(msg.x * screenSize.width, msg.y * screenSize.height);
@@ -31,3 +32,5 @@ io.on('connection', function (socket) {
 http.listen(3000, function () {
   console.log('listening on *:3000');
 });
+
+open('http://localhost:3000');

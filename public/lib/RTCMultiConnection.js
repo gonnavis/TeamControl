@@ -2042,7 +2042,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         window.DetectRTC = DetectRTC;
 
         if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
-            // module.exports = DetectRTC;
+            module.exports = DetectRTC;
         }
 
         if (typeof define === 'function' && define.amd) {
@@ -5900,7 +5900,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 };
 
 if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
-    // module.exports = exports = RTCMultiConnection;
+    module.exports = exports = RTCMultiConnection;
 }
 
 if (typeof define === 'function' && define.amd) {
