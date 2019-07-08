@@ -57,6 +57,10 @@ socket.on('log', function (array) {
   console.log.apply(console, array);
 });
 
+socket.on('mouse', function (mouse) {
+  console.log(mouse)
+});
+
 ////////////////////////////////////////////////
 
 function sendMessage(message) {

@@ -32,6 +32,13 @@ if (room !== '') {
   console.log('Attempted to create or  join room', room);
 }
 
+window.addEventListener('mousemove', e=>{
+  socket.emit('mouse', {
+    x: e.clientX,
+    y: e.clientY,
+  });
+})
+
 socket.on('created', function (room) {
   console.log('Created room ' + room);
   isInitiator = true;
