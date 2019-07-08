@@ -148,7 +148,8 @@ function createPeerConnection() {
     pc.ondatachannel = function (event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function (event) {
-        console.log(event.data)
+        let data=JSON.parse(event.data)
+        console.log(data)
       }
     }
     pc.onicecandidate = handleIceCandidate;
