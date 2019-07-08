@@ -10,12 +10,8 @@ var maxBandwidth = 64
 var isControllee = location.href.indexOf('controllee') >= 0
 const qvgaConstraints = {
   video: {
-    width: {
-      exact: 320
-    },
-    height: {
-      exact: 240
-    }
+    width: 320,
+    height: 240,
   }
 };
 
@@ -129,19 +125,17 @@ if (isControllee) {
 
 function getScreenStream() {
   if (navigator.getDisplayMedia) {
-    return navigator.getDisplayMedia(qvgaConstraints);
+    return navigator.getDisplayMedia({
+      video: true
+    });
   } else if (navigator.mediaDevices.getDisplayMedia) {
-    return navigator.mediaDevices.getDisplayMedia(qvgaConstraints);
+    return navigator.mediaDevices.getDisplayMedia({
+      video: true
+    });
   } else {
     return navigator.mediaDevices.getUserMedia({
       video: {
-        mediaSource: 'screen',
-        width: {
-          exact: 320
-        },
-        height: {
-          exact: 240
-        }
+        mediaSource: 'screen'
       }
     });
   }
