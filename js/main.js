@@ -201,10 +201,14 @@ function doCall() {
   console.log('Sending offer to peer');
   let options
   if(isControllee){
-
+    options = {
+      offerToReceiveAudio: 0,
+      offerToReceiveVideo: 0
+    }
   }else{
     options = {
-      offerToReceiveVideo: true
+      offerToReceiveAudio: 0,
+      offerToReceiveVideo: 1
     }
   }
   pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, options);
@@ -212,7 +216,10 @@ function doCall() {
 
 function doAnswer() {
   console.log('Sending answer to peer.');
-  pc.createAnswer().then(
+  pc.createAnswer({
+    offerToReceiveAudio: 0,
+    offerToReceiveVideo: 1
+  }).then(
     setLocalAndSendMessage,
     onCreateSessionDescriptionError
   );
