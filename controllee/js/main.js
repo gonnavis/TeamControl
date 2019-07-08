@@ -25,7 +25,8 @@ var pcConfig = {
 
 var room = prompt('Enter room name:');
 
-var socket = io.connect();
+var socket = io('https://www.gonnavis.com/');
+socket.connect()
 
 if (room !== '') {
   socket.emit('create or join', room);
