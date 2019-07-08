@@ -70,14 +70,14 @@ socket.on('message', function (message) {
     if (!isInitiator && !isStarted) {
       maybeStart();
     }
-    let =new RTCSessionDescription(message)
+    let sessionDescription=new RTCSessionDescription(message)
     pc.setRemoteDescription({
       type: sessionDescription.type,
       sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
     });
     doAnswer();
   } else if (message.type === 'answer' && isStarted) {
-    let = new RTCSessionDescription(message)
+    let sessionDescription= new RTCSessionDescription(message)
     pc.setRemoteDescription({
       type: sessionDescription.type,
       sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
