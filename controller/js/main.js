@@ -11,6 +11,7 @@ var videoWidth = 1024
 var isControllee = location.href.indexOf('controllee') >= 0
 var dataSendChannel
 var dataReceiveChannel
+var remoteVideo=document.getElementById('remoteVideo')
 
 /////////////////////////////////////////////
 
