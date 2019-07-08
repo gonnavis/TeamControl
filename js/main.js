@@ -32,7 +32,7 @@ if (room !== '') {
 socket.on('created', function (room) {
   console.log('Created room ' + room);
   isInitiator = true;
-  
+
   navigator.mediaDevices.getUserMedia({
       audio: false,
       video: true
@@ -56,6 +56,8 @@ socket.on('join', function (room) {
 socket.on('joined', function (room) {
   console.log('joined: ' + room);
   isChannelReady = true;
+
+  createPeerConnection();
 });
 
 socket.on('log', function (array) {
