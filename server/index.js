@@ -57,7 +57,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('mouse', function (mouse) {
-    socket.emit('mouse', mouse);
+    socket.broadcast.emit('mouse', mouse);
   });
 
 });
