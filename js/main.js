@@ -89,14 +89,30 @@ socket.on('message', function (message) {
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
-navigator.mediaDevices.getUserMedia({
-    audio: false,
-    video: true
-  })
+getScreenStream()
   .then(gotStream)
   .catch(function (e) {
     console.log('getUserMedia() error: ' + e.name);
   });
+
+
+function getScreenStream() {
+  if (navigator.getDisplayMedia) {
+    return navigator.getDisplayMedia({
+      video: true
+    });
+  } else if (navigator.mediaDevices.getDisplayMedia) {
+    return navigator.mediaDevices.getDisplayMedia({
+      video: true
+    });
+  } else {
+    return navigator.mediaDevices.getUserMedia({
+      video: {
+        mediaSource: 'screen'
+      }
+    });
+  }
+}
 
 function gotStream(stream) {
   console.log('Adding local stream.');
