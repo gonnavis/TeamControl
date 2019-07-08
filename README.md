@@ -3,7 +3,7 @@
 Remote Control Application based on WebRTC
 
 
-## On the computer be controlled
+## On the computer to be controlled
 
 ```
 
