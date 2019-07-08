@@ -8,11 +8,6 @@ var pc;
 var remoteStream;
 var maxBandwidth = 64
 var isControllee = location.href.indexOf('controllee') >= 0
-const qvgaConstraints = {
-  video: {
-    width: 320,
-  }
-};
 
 var pcConfig = {
   'iceServers': [{
@@ -195,7 +190,7 @@ function doCall() {
   console.log('Sending offer to peer');
   pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, {
     offerToReceiveAudio: 0,
-    offerToReceiveVideo: 0
+    offerToReceiveVideo: 1
   });
 }
 
