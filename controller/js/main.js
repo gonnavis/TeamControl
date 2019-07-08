@@ -31,6 +31,12 @@ remoteVideo.addEventListener('mousemove', e => {
   }));
 })
 
+remoteVideo.addEventListener('click', e => {
+  dataSendChannel.send(JSON.stringify({
+    click: true,
+  }));
+})
+
 socket.on('created', function (room) {
   console.log('Created room ' + room);
   isInitiator = true;
