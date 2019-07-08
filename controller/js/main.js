@@ -10,17 +10,6 @@ var remoteStream;
 var videoWidth = 1024
 var isControllee = location.href.indexOf('controllee') >= 0
 
-var pcConfig = {
-  'iceServers': [{
-      'urls': 'stun:stun.l.google.com:19302'
-    },
-    {
-      'urls': 'turn:numb.viagenie.ca@gonnavis@gmail.com',
-      'credential': 'WebRTC',
-    }
-  ]
-};
-
 /////////////////////////////////////////////
 
 var room = prompt('Enter room name:');
@@ -81,18 +70,10 @@ socket.on('message', function (message) {
     }
     let sessionDescription = new RTCSessionDescription(message)
     pc.setRemoteDescription(sessionDescription)
-    // pc.setRemoteDescription({
-    //   type: sessionDescription.type,
-    //   sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
-    // });
     doAnswer();
   } else if (message.type === 'answer' && isStarted) {
     let sessionDescription = new RTCSessionDescription(message)
     pc.setRemoteDescription(sessionDescription)
-    // pc.setRemoteDescription({
-    //   type: sessionDescription.type,
-    //   sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
-    // });
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
       sdpMLineIndex: message.label,
@@ -217,10 +198,6 @@ function doAnswer() {
 
 function setLocalAndSendMessage(sessionDescription) {
   pc.setLocalDescription(sessionDescription)
-  // pc.setLocalDescription({
-  //   type: sessionDescription.type,
-  //   sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
-  // });
   console.log('setLocalAndSendMessage sending message', sessionDescription);
   sendMessage(sessionDescription);
 }
@@ -255,21 +232,4 @@ function stop() {
   isStarted = false;
   pc.close();
   pc = null;
-}
-
-
-
-function updateBandwidthRestriction(sdp, bandwidth) {
-  let modifier = 'AS';
-  if (adapter.browserDetails.browser === 'firefox') {
-    bandwidth = (bandwidth >>> 0) * 1000;
-    modifier = 'TIAS';
-  }
-  if (sdp.indexOf('b=' + modifier + ':') === -1) {
-    // insert b= after c= line.
-    sdp = sdp.replace(/c=IN (.*)\r\n/, 'c=IN $1\r\nb=' + modifier + ':' + bandwidth + '\r\n');
-  } else {
-    sdp = sdp.replace(new RegExp('b=' + modifier + ':.*\r\n'), 'b=' + modifier + ':' + bandwidth + '\r\n');
-  }
-  return sdp;
 }

@@ -56,8 +56,4 @@ io.sockets.on('connection', function(socket) {
     console.log('received bye');
   });
 
-  socket.on('mouse', function (mouse) {
-    socket.broadcast.emit('mouse', mouse);
-  });
-
 });
