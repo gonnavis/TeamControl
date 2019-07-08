@@ -7,7 +7,7 @@ var localStream;
 var pc;
 var remoteStream;
 // var maxBandwidth = 64
-var videoWidth = 1024
+var videoWidth = 800
 var isControllee = location.href.indexOf('controllee') >= 0
 
 var pcConfig = {
@@ -193,7 +193,7 @@ function doCall() {
   console.log('Sending offer to peer');
   pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, {
     offerToReceiveAudio: 0,
-    offerToReceiveVideo: 0
+    offerToReceiveVideo: 1
   });
 }
 
