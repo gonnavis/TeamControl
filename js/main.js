@@ -8,6 +8,16 @@ var pc;
 var remoteStream;
 var maxBandwidth = 64
 var isControllee = location.href.indexOf('controllee') >= 0
+const qvgaConstraints = {
+  video: {
+    width: {
+      exact: 320
+    },
+    height: {
+      exact: 240
+    }
+  }
+};
 
 var pcConfig = {
   'iceServers': [{
@@ -119,17 +129,19 @@ if (isControllee) {
 
 function getScreenStream() {
   if (navigator.getDisplayMedia) {
-    return navigator.getDisplayMedia({
-      video: true
-    });
+    return navigator.getDisplayMedia(qvgaConstraints);
   } else if (navigator.mediaDevices.getDisplayMedia) {
-    return navigator.mediaDevices.getDisplayMedia({
-      video: true
-    });
+    return navigator.mediaDevices.getDisplayMedia(qvgaConstraints);
   } else {
     return navigator.mediaDevices.getUserMedia({
       video: {
-        mediaSource: 'screen'
+        mediaSource: 'screen',
+        width: {
+          exact: 320
+        },
+        height: {
+          exact: 240
+        }
       }
     });
   }
