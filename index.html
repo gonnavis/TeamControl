@@ -5,18 +5,15 @@
 
   <title>Realtime communication with WebRTC</title>
 
-  <!-- <link rel="stylesheet" href="/css/main.css" /> -->
+  <link rel="stylesheet" href="/css/main.css" />
 
 </head>
 
 <body>
 
-  <h1>Realtime communication with WebRTC</h1>
 
-  <div id="videos">
-    <video id="localVideo" autoplay muted playsinline style="display:none;"></video>
-    <video id="remoteVideo" autoplay muted playsinline style="width:100%;"></video>
-  </div>
+  <video id="localVideo" autoplay muted playsinline style="display:none;"></video>
+  <video id="remoteVideo" autoplay muted playsinline style="width:100%; display:block;"></video>
 
   <!-- This file is automatically added/served when running "node index.js". -->
   <script src="/socket.io/socket.io.js"></script>
