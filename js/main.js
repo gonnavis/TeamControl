@@ -6,6 +6,7 @@ var isStarted = false;
 var localStream;
 var pc;
 var remoteStream;
+var maxBandwidth=64
 
 var pcConfig = {
   'iceServers': [{
@@ -69,10 +70,18 @@ socket.on('message', function (message) {
     if (!isInitiator && !isStarted) {
       maybeStart();
     }
-    pc.setRemoteDescription(new RTCSessionDescription(message));
+    let =new RTCSessionDescription(message)
+    pc.setRemoteDescription({
+      type: sessionDescription.type,
+      sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
+    });
     doAnswer();
   } else if (message.type === 'answer' && isStarted) {
-    pc.setRemoteDescription(new RTCSessionDescription(message));
+    let = new RTCSessionDescription(message)
+    pc.setRemoteDescription({
+      type: sessionDescription.type,
+      sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
+    });
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
       sdpMLineIndex: message.label,
@@ -200,7 +209,10 @@ function doAnswer() {
 }
 
 function setLocalAndSendMessage(sessionDescription) {
-  pc.setLocalDescription(sessionDescription);
+  pc.setLocalDescription({
+    type: sessionDescription.type,
+    sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
+  });
   console.log('setLocalAndSendMessage sending message', sessionDescription);
   sendMessage(sessionDescription);
 }
@@ -235,4 +247,21 @@ function stop() {
   isStarted = false;
   pc.close();
   pc = null;
+}
+
+
+
+function updateBandwidthRestriction(sdp, bandwidth) {
+  let modifier = 'AS';
+  if (adapter.browserDetails.browser === 'firefox') {
+    bandwidth = (bandwidth >>> 0) * 1000;
+    modifier = 'TIAS';
+  }
+  if (sdp.indexOf('b=' + modifier + ':') === -1) {
+    // insert b= after c= line.
+    sdp = sdp.replace(/c=IN (.*)\r\n/, 'c=IN $1\r\nb=' + modifier + ':' + bandwidth + '\r\n');
+  } else {
+    sdp = sdp.replace(new RegExp('b=' + modifier + ':.*\r\n'), 'b=' + modifier + ':' + bandwidth + '\r\n');
+  }
+  return sdp;
 }
