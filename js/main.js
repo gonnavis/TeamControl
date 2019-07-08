@@ -32,6 +32,15 @@ if (room !== '') {
 socket.on('created', function (room) {
   console.log('Created room ' + room);
   isInitiator = true;
+  
+  navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: true
+    })
+    .then(gotStream)
+    .catch(function (e) {
+      console.log('getUserMedia() error: ' + e.name);
+    });
 });
 
 socket.on('full', function (room) {
@@ -88,13 +97,6 @@ socket.on('message', function (message) {
 
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
-
-getScreenStream()
-  .then(gotStream)
-  .catch(function (e) {
-    console.log('getUserMedia() error: ' + e.name);
-  });
-
 
 function getScreenStream() {
   if (navigator.getDisplayMedia) {
