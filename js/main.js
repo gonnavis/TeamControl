@@ -199,19 +199,10 @@ function handleCreateOfferError(event) {
 
 function doCall() {
   console.log('Sending offer to peer');
-  let options
-  if(isControllee){
-    options = {
-      offerToReceiveAudio: 0,
-      offerToReceiveVideo: 0
-    }
-  }else{
-    options = {
-      offerToReceiveAudio: 0,
-      offerToReceiveVideo: 1
-    }
-  }
-  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, options);
+  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, {
+    offerToReceiveAudio: 0,
+    offerToReceiveVideo: 0
+  });
 }
 
 function doAnswer() {
