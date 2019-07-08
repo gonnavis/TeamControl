@@ -9,6 +9,8 @@ var remoteStream;
 // var maxBandwidth = 64
 var videoWidth = 1024
 var isControllee = location.href.indexOf('controllee') >= 0
+var dataSendChannel
+var dataReceiveChannel
 
 /////////////////////////////////////////////
 
@@ -22,7 +24,7 @@ if (room !== '') {
 }
 
 window.addEventListener('mousemove', e=>{
-  socket.emit('mouse', {
+  dataSendChannel.send({
     x: e.clientX,
     y: e.clientY,
   });
@@ -148,6 +150,13 @@ window.onbeforeunload = function () {
 function createPeerConnection() {
   try {
     pc = new RTCPeerConnection(null);
+    dataSendChannel = pc.createDataChannel('sendDataChannel')
+    pc.ondatachannel=function(event){
+      dataReceiveChannel = event.channel;
+      receiveChannel.onmessage = function(event){
+        console.log(event.data)
+      }
+    }
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
