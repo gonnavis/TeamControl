@@ -7,6 +7,7 @@ var localStream;
 var pc;
 var remoteStream;
 var maxBandwidth=64
+var isControllee = location.href.indexOf('controllee') >= 0
 
 var pcConfig = {
   'iceServers': [{
@@ -98,22 +99,22 @@ socket.on('message', function (message) {
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
-if (location.href.indexOf('controllee') >= 0) {
+if (isControllee) {
   getScreenStream()
     .then(gotStream)
     .catch(function (e) {
       console.log('getUserMedia() error: ' + e.name);
     });
 } else {
-  createPeerConnection();
-  // navigator.mediaDevices.getUserMedia({
-  //     audio: false,
-  //     video: true
-  //   })
-  //   .then(gotStream)
-  //   .catch(function (e) {
-  //     console.log('getUserMedia() error: ' + e.name);
-  //   });
+  // createPeerConnection();
+  navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: true
+    })
+    .then(gotStream)
+    .catch(function (e) {
+      console.log('getUserMedia() error: ' + e.name);
+    });
 }
 
 function getScreenStream() {
@@ -198,7 +199,15 @@ function handleCreateOfferError(event) {
 
 function doCall() {
   console.log('Sending offer to peer');
-  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError);
+  let options
+  if(isControllee){
+
+  }else{
+    options = {
+      offerToReceiveVideo: true
+    }
+  }
+  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, options);
 }
 
 function doAnswer() {
