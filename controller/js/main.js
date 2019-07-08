@@ -23,10 +23,10 @@ if (room !== '') {
   console.log('Attempted to create or  join room', room);
 }
 
-window.addEventListener('mousemove', e=>{
+remoteVideo.addEventListener('mousemove', e => {
   dataSendChannel.send(JSON.stringify({
-    x: e.clientX,
-    y: e.clientY,
+    x: e.offsetX/remoteVideo.offsetWidth,
+    y: e.offsetY/remoteVideo.offsetHeight,
   }));
 })
 

@@ -13,8 +13,8 @@ var app = http.createServer(function (req, res) {
   if (query) {
     let mouse = JSON.parse(decodeURIComponent(query))
     if (mouse.x !== undefined) {
-      // robot.moveMouse(mouse.x * screenSize.width, mouse.y * screenSize.height);
-      robot.moveMouse(mouse.x, mouse.y);
+      robot.moveMouse(mouse.x * screenSize.width, mouse.y * screenSize.height);
+      // robot.moveMouse(mouse.x, mouse.y);
     }
 
     if (mouse.click) {
