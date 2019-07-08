@@ -147,7 +147,7 @@ function createPeerConnection() {
     dataSendChannel = pc.createDataChannel('sendDataChannel')
     pc.ondatachannel = function (event) {
       dataReceiveChannel = event.channel;
-      receiveChannel.onmessage = function (event) {
+      dataReceiveChannel.onmessage = function (event) {
         console.log(event.data)
       }
     }
