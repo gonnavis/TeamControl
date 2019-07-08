@@ -1,27 +1,11 @@
 {
-  "name": "teamcontrol",
+  "name": "webrtc-codelab",
   "version": "0.0.1",
-  "description": "Remote Control Application based on WebRTC",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "repository": "https://github.com/gonnavis/TeamControl",
-  "keywords": [
-    "remotecontrol",
-    "webrtc",
-    "electron",
-    "robotjs",
-    "rtcmulticonnection"
-  ],
-  "author": "gonnavis",
-  "devDependencies": {
-    "electron": "^5.0.5"
-  },
+  "description": "WebRTC codelab",
   "dependencies": {
-    "express": "^4.17.1",
+    "node-static": "^0.7.10",
     "open": "^6.4.0",
     "robotjs": "^0.5.1",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.0.4"
   }
 }
