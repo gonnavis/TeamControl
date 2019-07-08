@@ -6,7 +6,8 @@ var isStarted = false;
 var localStream;
 var pc;
 var remoteStream;
-var maxBandwidth = 64
+// var maxBandwidth = 64
+var videoWidth = 800
 var isControllee = location.href.indexOf('controllee') >= 0
 
 var pcConfig = {
@@ -72,17 +73,19 @@ socket.on('message', function (message) {
       maybeStart();
     }
     let sessionDescription = new RTCSessionDescription(message)
-    pc.setRemoteDescription({
-      type: sessionDescription.type,
-      sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
-    });
+    pc.setRemoteDescription(sessionDescription)
+    // pc.setRemoteDescription({
+    //   type: sessionDescription.type,
+    //   sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
+    // });
     doAnswer();
   } else if (message.type === 'answer' && isStarted) {
     let sessionDescription = new RTCSessionDescription(message)
-    pc.setRemoteDescription({
-      type: sessionDescription.type,
-      sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
-    });
+    pc.setRemoteDescription(sessionDescription)
+    // pc.setRemoteDescription({
+    //   type: sessionDescription.type,
+    //   sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
+    // });
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
       sdpMLineIndex: message.label,
@@ -103,7 +106,7 @@ if (isControllee) {
   navigator.mediaDevices.getDisplayMedia({
       audio: false,
       video: {
-        width: 320
+        width: videoWidth
       },
     })
     .then(gotStream)
@@ -115,7 +118,7 @@ if (isControllee) {
   navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
-        width: 320
+        width: videoWidth
       },
     })
     .then(gotStream)
@@ -206,10 +209,11 @@ function doAnswer() {
 }
 
 function setLocalAndSendMessage(sessionDescription) {
-  pc.setLocalDescription({
-    type: sessionDescription.type,
-    sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
-  });
+  pc.setLocalDescription(sessionDescription)
+  // pc.setLocalDescription({
+  //   type: sessionDescription.type,
+  //   sdp: updateBandwidthRestriction(sessionDescription.sdp, maxBandwidth)
+  // });
   console.log('setLocalAndSendMessage sending message', sessionDescription);
   sendMessage(sessionDescription);
 }
