@@ -11,7 +11,6 @@ var isControllee = location.href.indexOf('controllee') >= 0
 const qvgaConstraints = {
   video: {
     width: 320,
-    height: 240,
   }
 };
 
@@ -106,7 +105,12 @@ var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
 if (isControllee) {
-  getScreenStream()
+  navigator.mediaDevices.getDisplayMedia({
+      audio: false,
+      video: {
+        width: 320
+      },
+    })
     .then(gotStream)
     .catch(function (e) {
       console.log('getUserMedia() error: ' + e.name);
@@ -115,30 +119,14 @@ if (isControllee) {
   // createPeerConnection();
   navigator.mediaDevices.getUserMedia({
       audio: false,
-      video: true
+      video: {
+        width: 320
+      },
     })
     .then(gotStream)
     .catch(function (e) {
       console.log('getUserMedia() error: ' + e.name);
     });
-}
-
-function getScreenStream() {
-  if (navigator.getDisplayMedia) {
-    return navigator.getDisplayMedia({
-      video: true
-    });
-  } else if (navigator.mediaDevices.getDisplayMedia) {
-    return navigator.mediaDevices.getDisplayMedia({
-      video: true
-    });
-  } else {
-    return navigator.mediaDevices.getUserMedia({
-      video: {
-        mediaSource: 'screen'
-      }
-    });
-  }
 }
 
 function gotStream(stream) {
