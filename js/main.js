@@ -89,13 +89,13 @@ socket.on('message', function (message) {
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
-// if (location.href.indexOf('controllee') >= 0) {
-//   getScreenStream()
-//     .then(gotStream)
-//     .catch(function (e) {
-//       console.log('getUserMedia() error: ' + e.name);
-//     });
-// } else {
+if (location.href.indexOf('controllee') >= 0) {
+  getScreenStream()
+    .then(gotStream)
+    .catch(function (e) {
+      console.log('getUserMedia() error: ' + e.name);
+    });
+} else {
   navigator.mediaDevices.getUserMedia({
       audio: false,
       video: true
@@ -104,7 +104,7 @@ var remoteVideo = document.querySelector('#remoteVideo');
     .catch(function (e) {
       console.log('getUserMedia() error: ' + e.name);
     });
-// }
+}
 
 function getScreenStream() {
   if (navigator.getDisplayMedia) {
