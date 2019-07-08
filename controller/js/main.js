@@ -24,10 +24,10 @@ if (room !== '') {
 }
 
 window.addEventListener('mousemove', e=>{
-  dataSendChannel.send({
+  dataSendChannel.send(JSON.stringify({
     x: e.clientX,
     y: e.clientY,
-  });
+  }));
 })
 
 socket.on('created', function (room) {
