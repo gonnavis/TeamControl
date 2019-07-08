@@ -12,6 +12,8 @@ var isControllee = location.href.indexOf('controllee') >= 0
 var dataSendChannel
 var dataReceiveChannel
 
+var xhr = new XMLHttpRequest();
+
 /////////////////////////////////////////////
 
 var room = prompt('Enter room name:');
@@ -148,8 +150,10 @@ function createPeerConnection() {
     pc.ondatachannel = function (event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function (event) {
-        let data=JSON.parse(event.data)
-        console.log(data)
+        // let mouse=JSON.parse(event.data)
+        let mouseStr=event.data
+        xhr.open("GET", "http://localhost:7890/?"+mouseStr);
+        xhr.send()
       }
     }
     pc.onicecandidate = handleIceCandidate;
