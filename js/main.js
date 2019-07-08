@@ -106,15 +106,15 @@ if (isControllee) {
       console.log('getUserMedia() error: ' + e.name);
     });
 } else {
-  // createPeerConnection();
-  navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: true
-    })
-    .then(gotStream)
-    .catch(function (e) {
-      console.log('getUserMedia() error: ' + e.name);
-    });
+  createPeerConnection();
+  // navigator.mediaDevices.getUserMedia({
+  //     audio: false,
+  //     video: true
+  //   })
+  //   .then(gotStream)
+  //   .catch(function (e) {
+  //     console.log('getUserMedia() error: ' + e.name);
+  //   });
 }
 
 function getScreenStream() {
