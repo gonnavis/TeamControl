@@ -111,17 +111,21 @@ if (isControllee) {
       console.log('getUserMedia() error: ' + e.name);
     });
 } else {
+
+  gotStream(new MediaStream())
+
   // createPeerConnection();
-  navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        width: videoWidth
-      },
-    })
-    .then(gotStream)
-    .catch(function (e) {
-      console.log('getUserMedia() error: ' + e.name);
-    });
+
+  // navigator.mediaDevices.getUserMedia({
+  //     audio: false,
+  //     video: {
+  //       width: videoWidth
+  //     },
+  //   })
+  //   .then(gotStream)
+  //   .catch(function (e) {
+  //     console.log('getUserMedia() error: ' + e.name);
+  //   });
 }
 
 function gotStream(stream) {
