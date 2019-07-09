@@ -11,7 +11,7 @@ var videoWidth = 1024
 var isControllee = location.href.indexOf('controllee') >= 0
 var dataSendChannel
 var dataReceiveChannel
-var remoteVideo=document.getElementById('remoteVideo')
+var remoteVideo = document.getElementById('remoteVideo')
 
 /////////////////////////////////////////////
 
@@ -24,18 +24,42 @@ if (room !== '') {
   console.log('Attempted to create or  join room', room);
 }
 
+
+
+
 remoteVideo.addEventListener('mousemove', e => {
+  if (!dataSendChannel) return
   dataSendChannel.send(JSON.stringify({
-    x: e.offsetX/remoteVideo.offsetWidth,
-    y: e.offsetY/remoteVideo.offsetHeight,
+    type: 'mousemove',
+    x: e.offsetX / remoteVideo.offsetWidth,
+    y: e.offsetY / remoteVideo.offsetHeight,
   }));
 })
 
-remoteVideo.addEventListener('click', e => {
+remoteVideo.addEventListener('mousedown', e => {
+  if (!dataSendChannel) return
   dataSendChannel.send(JSON.stringify({
-    click: true,
+    type: 'mousedown',
   }));
 })
+
+remoteVideo.addEventListener('mouseup', e => {
+  if (!dataSendChannel) return
+  dataSendChannel.send(JSON.stringify({
+    type: 'mouseup',
+  }));
+})
+
+remoteVideo.addEventListener('mousewheel', e => {
+  if (!dataSendChannel) return
+  dataSendChannel.send(JSON.stringify({
+    type: 'mousewheel',
+    x: e.deltaX,
+    y: e.deltaY,
+  }));
+})
+
+
 
 socket.on('created', function (room) {
   console.log('Created room ' + room);
@@ -162,7 +186,7 @@ function createPeerConnection() {
   try {
     pc = new RTCPeerConnection(null);
     dataSendChannel = pc.createDataChannel('sendDataChannel')
-    pc.ondatachannel=function(event){
+    pc.ondatachannel = function (event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function (event) {
         console.log(event.data)

@@ -12,13 +12,19 @@ var app = http.createServer(function (req, res) {
   let query = req.url.split('?')[1]
   if (query) {
     let mouse = JSON.parse(decodeURIComponent(query))
-    if (mouse.x !== undefined) {
-      robot.moveMouse(mouse.x * screenSize.width, mouse.y * screenSize.height);
-      // robot.moveMouse(mouse.x, mouse.y);
-    }
-
-    if (mouse.click) {
-      robot.mouseClick()
+    switch (mouse.type) {
+      case 'mousemove':
+        robot.moveMouse(mouse.x * screenSize.width, mouse.y * screenSize.height)
+        break
+      case 'mousedown':
+        robot.mouseToggle('down')
+        break
+      case 'mouseup':
+        robot.mouseToggle('up')
+        break
+      case 'mousewheel':
+        robot.scrollMouse(mouse.x, -mouse.y)
+        break
     }
     res.end('ok');
   }
