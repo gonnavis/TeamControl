@@ -45,7 +45,7 @@ var app = http.createServer(function (req, res) {
         }
         break
       case 'mousewheel':
-        robot.scrollMouse(mouse.x, -mouse.y)
+        robot.scrollMouse(mouse.x, mouse.y)
         break
     }
     res.end('ok');
