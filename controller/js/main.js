@@ -29,6 +29,7 @@ if (room !== '') {
 
 remoteVideo.addEventListener('mousemove', e => {
   if (!dataSendChannel) return
+  e.preventDefault()
   dataSendChannel.send(JSON.stringify({
     type: 'mousemove',
     button: e.button,
@@ -40,6 +41,7 @@ remoteVideo.addEventListener('mousemove', e => {
 
 remoteVideo.addEventListener('mousedown', e => {
   if (!dataSendChannel) return
+  e.preventDefault()
   dataSendChannel.send(JSON.stringify({
     type: 'mousedown',
     button: e.button,
@@ -49,6 +51,7 @@ remoteVideo.addEventListener('mousedown', e => {
 
 remoteVideo.addEventListener('mouseup', e => {
   if (!dataSendChannel) return
+  e.preventDefault()
   dataSendChannel.send(JSON.stringify({
     type: 'mouseup',
     button: e.button,
@@ -58,6 +61,7 @@ remoteVideo.addEventListener('mouseup', e => {
 
 remoteVideo.addEventListener('mousewheel', e => {
   if (!dataSendChannel) return
+  e.preventDefault()
   dataSendChannel.send(JSON.stringify({
     type: 'mousewheel',
     button: e.button,
