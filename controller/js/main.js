@@ -31,6 +31,8 @@ remoteVideo.addEventListener('mousemove', e => {
   if (!dataSendChannel) return
   dataSendChannel.send(JSON.stringify({
     type: 'mousemove',
+    button: e.button,
+    buttons: e.buttons
     x: e.offsetX / remoteVideo.offsetWidth,
     y: e.offsetY / remoteVideo.offsetHeight,
   }));
@@ -40,6 +42,8 @@ remoteVideo.addEventListener('mousedown', e => {
   if (!dataSendChannel) return
   dataSendChannel.send(JSON.stringify({
     type: 'mousedown',
+    button: e.button,
+    buttons: e.buttons
   }));
 })
 
@@ -47,6 +51,8 @@ remoteVideo.addEventListener('mouseup', e => {
   if (!dataSendChannel) return
   dataSendChannel.send(JSON.stringify({
     type: 'mouseup',
+    button: e.button,
+    buttons: e.buttons
   }));
 })
 
@@ -54,6 +60,8 @@ remoteVideo.addEventListener('mousewheel', e => {
   if (!dataSendChannel) return
   dataSendChannel.send(JSON.stringify({
     type: 'mousewheel',
+    button: e.button,
+    buttons: e.buttons
     x: e.deltaX,
     y: e.deltaY,
   }));

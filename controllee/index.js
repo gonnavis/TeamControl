@@ -17,10 +17,30 @@ var app = http.createServer(function (req, res) {
         robot.moveMouse(mouse.x * screenSize.width, mouse.y * screenSize.height)
         break
       case 'mousedown':
-        robot.mouseToggle('down')
+        switch (mouse.button) {
+          case 0:
+            robot.mouseToggle('down')
+            break
+          case 1:
+            robot.mouseToggle('down', 'middle')
+            break
+          case 2:
+            robot.mouseToggle('down', 'right')
+            break
+        }
         break
       case 'mouseup':
-        robot.mouseToggle('up')
+        switch (mouse.button) {
+          case 0:
+            robot.mouseToggle('up')
+            break
+          case 1:
+            robot.mouseToggle('up', 'middle')
+            break
+          case 2:
+            robot.mouseToggle('up', 'right')
+            break
+        }
         break
       case 'mousewheel':
         robot.scrollMouse(mouse.x, -mouse.y)
