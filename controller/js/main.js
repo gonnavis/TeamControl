@@ -71,6 +71,10 @@ remoteVideo.addEventListener('mousewheel', e => {
   }));
 })
 
+remoteVideo.addEventListener('contextmenu', e => {
+  e.preventDefault()
+})
+
 
 
 socket.on('created', function (room) {
