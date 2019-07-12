@@ -21,6 +21,8 @@ var room = prompt('Enter room name:');
 var socket = io('https://www.gonnavis.com/');
 socket.connect()
 
+var socketLocal = io('/');
+
 if (room !== '') {
   socket.emit('create or join', room);
   console.log('Attempted to create or  join room', room);
@@ -151,9 +153,10 @@ function createPeerConnection() {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function (event) {
         // let mouse=JSON.parse(event.data)
-        let mouseStr=event.data
-        xhr.open("GET", "http://localhost:7890/?"+mouseStr);
-        xhr.send()
+        let inputStr=event.data
+        // xhr.open("GET", "http://localhost:7890/?"+inputStr);
+        // xhr.send()
+        socketLocal.emit('input', inputStr)
       }
     }
     pc.onicecandidate = handleIceCandidate;
@@ -241,3 +244,15 @@ function stop() {
   pc.close();
   pc = null;
 }
+
+
+
+
+
+
+
+
+
+
+
+
