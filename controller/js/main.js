@@ -33,7 +33,6 @@ remoteVideo.addEventListener('mousemove', e => {
   dataSendChannel.send(JSON.stringify({
     type: 'mousemove',
     button: e.button,
-    buttons: e.buttons,
     x: e.offsetX / remoteVideo.offsetWidth,
     y: e.offsetY / remoteVideo.offsetHeight,
   }));
@@ -45,7 +44,6 @@ remoteVideo.addEventListener('mousedown', e => {
   dataSendChannel.send(JSON.stringify({
     type: 'mousedown',
     button: e.button,
-    buttons: e.buttons,
   }));
 })
 
@@ -55,7 +53,6 @@ remoteVideo.addEventListener('mouseup', e => {
   dataSendChannel.send(JSON.stringify({
     type: 'mouseup',
     button: e.button,
-    buttons: e.buttons,
   }));
 })
 
@@ -65,7 +62,6 @@ remoteVideo.addEventListener('mousewheel', e => {
   dataSendChannel.send(JSON.stringify({
     type: 'mousewheel',
     button: e.button,
-    buttons: e.buttons,
     x: e.deltaX,
     y: e.deltaY,
   }));
@@ -73,6 +69,32 @@ remoteVideo.addEventListener('mousewheel', e => {
 
 remoteVideo.addEventListener('contextmenu', e => {
   e.preventDefault()
+})
+
+window.addEventListener('keydown', e => {
+  if (!dataSendChannel) return
+  e.preventDefault()
+  dataSendChannel.send(JSON.stringify({
+    type: 'keydown',
+    key: e.key,
+    // alt: e.altKey ? 1 : 0,
+    // ctrl: e.ctrlKey ? 1 : 0,
+    // meta: e.metaKey ? 1 : 0,
+    // shift: e.shiftKey ? 1 : 0,
+  }));
+})
+
+window.addEventListener('keyup', e => {
+  if (!dataSendChannel) return
+  e.preventDefault()
+  dataSendChannel.send(JSON.stringify({
+    type: 'keyup',
+    key: e.key,
+    // alt: e.altKey ? 1 : 0,
+    // ctrl: e.ctrlKey ? 1 : 0,
+    // meta: e.metaKey ? 1 : 0,
+    // shift: e.shiftKey ? 1 : 0,
+  }));
 })
 
 

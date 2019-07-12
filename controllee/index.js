@@ -11,14 +11,14 @@ var app = http.createServer(function (req, res) {
 
   let query = req.url.split('?')[1]
   if (query) {
-    let mouse = JSON.parse(decodeURIComponent(query))
-    switch (mouse.type) {
+    let input = JSON.parse(decodeURIComponent(query))
+    console.log('input', input)
+    switch (input.type) {
       case 'mousemove':
-        robot.moveMouse(mouse.x * screenSize.width, mouse.y * screenSize.height)
+        robot.moveMouse(input.x * screenSize.width, input.y * screenSize.height)
         break
       case 'mousedown':
-        console.log('mousedown', JSON.stringify(mouse))
-        switch (mouse.button) {
+        switch (input.button) {
           case 0:
             robot.mouseToggle('down')
             break
@@ -31,8 +31,7 @@ var app = http.createServer(function (req, res) {
         }
         break
       case 'mouseup':
-        console.log('mouseup', JSON.stringify(mouse))
-        switch (mouse.button) {
+        switch (input.button) {
           case 0:
             robot.mouseToggle('up')
             break
@@ -45,7 +44,13 @@ var app = http.createServer(function (req, res) {
         }
         break
       case 'mousewheel':
-        robot.scrollMouse(mouse.x, mouse.y)
+        robot.scrollMouse(input.x, input.y)
+        break
+      case 'keydown':
+        robot.keyToggle(input.key, 'down')
+        break
+      case 'keyup':
+        robot.keyToggle(input.key, 'up')
         break
     }
     res.end('ok');
