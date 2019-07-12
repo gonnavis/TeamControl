@@ -47,10 +47,20 @@ var app = http.createServer(function (req, res) {
         robot.scrollMouse(input.x, input.y)
         break
       case 'keydown':
-        robot.keyToggle(input.key, 'down')
+        try {
+          mapKey(input)
+          robot.keyToggle(input.key, 'down')
+        } catch (e) {
+          console.log(e)
+        }
         break
       case 'keyup':
-        robot.keyToggle(input.key, 'up')
+        try {
+          mapKey(input)
+          robot.keyToggle(input.key, 'up')
+        } catch (e) {
+          console.log(e)
+        }
         break
     }
     res.end('ok');
@@ -62,3 +72,23 @@ var app = http.createServer(function (req, res) {
 var io = socketIO.listen(app);
 
 open(`http://localhost:${port}/controllee/`);
+
+
+
+function mapKey(input) {
+  input.key = input.key.toLowerCase()
+  switch (input.key) {
+    case 'arrowup':
+      input.key = 'up'
+      break
+    case 'arrowdown':
+      input.key = 'down'
+      break
+    case 'arrowleft':
+      input.key = 'left'
+      break
+    case 'arrowright':
+      input.key = 'right'
+      break
+  }
+}
