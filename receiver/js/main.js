@@ -3,52 +3,41 @@
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
-var localStream;
 var pc;
-var remoteStream;
-// var maxBandwidth = 64
-var videoWidth = 1024
-var isControllee = location.href.indexOf('controllee') >= 0
 var dataSendChannel
-var dataReceiveChannel
-
-var xhr = new XMLHttpRequest();
 
 /////////////////////////////////////////////
 
 var room = prompt('Enter room name:');
 
-var socket = io('https://www.gonnavis.com/');
-socket.connect()
-
-var socketLocal = io('/');
+var socket = io.connect();
 
 if (room !== '') {
   socket.emit('create or join', room);
   console.log('Attempted to create or  join room', room);
 }
 
-socket.on('created', function (room) {
+socket.on('created', function(room) {
   console.log('Created room ' + room);
   isInitiator = true;
 });
 
-socket.on('full', function (room) {
+socket.on('full', function(room) {
   console.log('Room ' + room + ' is full');
 });
 
-socket.on('join', function (room) {
+socket.on('join', function(room) {
   console.log('Another peer made a request to join room ' + room);
   console.log('This peer is the initiator of room ' + room + '!');
   isChannelReady = true;
 });
 
-socket.on('joined', function (room) {
+socket.on('joined', function(room) {
   console.log('joined: ' + room);
   isChannelReady = true;
 });
 
-socket.on('log', function (array) {
+socket.on('log', function(array) {
   console.log.apply(console, array);
 });
 
@@ -60,7 +49,7 @@ function sendMessage(message) {
 }
 
 // This client receives a message
-socket.on('message', function (message) {
+socket.on('message', function(message) {
   console.log('Client received message:', message);
   if (message === 'got user media') {
     maybeStart();
@@ -87,50 +76,12 @@ socket.on('message', function (message) {
 
 ////////////////////////////////////////////////////
 
-var localVideo = document.querySelector('#localVideo');
-var remoteVideo = document.querySelector('#remoteVideo');
-
-if (isControllee) {
-  navigator.mediaDevices.getDisplayMedia({
-      audio: false,
-      video: {
-        width: videoWidth
-      },
-    })
-    .then(gotStream)
-    .catch(function (e) {
-      console.log('getUserMedia() error: ' + e.name);
-    });
-} else {
-  // createPeerConnection();
-  navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        width: videoWidth
-      },
-    })
-    .then(gotStream)
-    .catch(function (e) {
-      console.log('getUserMedia() error: ' + e.name);
-    });
-}
-
-function gotStream(stream) {
-  console.log('Adding local stream.');
-  localStream = stream;
-  localVideo.srcObject = stream;
-  sendMessage('got user media');
-  if (isInitiator) {
-    maybeStart();
-  }
-}
 
 function maybeStart() {
-  console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
-  if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+  console.log('>>>>>>> maybeStart() ', isStarted, isChannelReady);
+  if (!isStarted && isChannelReady) {
     console.log('>>>>>> creating peer connection');
     createPeerConnection();
-    pc.addStream(localStream);
     isStarted = true;
     console.log('isInitiator', isInitiator);
     if (isInitiator) {
@@ -139,7 +90,7 @@ function maybeStart() {
   }
 }
 
-window.onbeforeunload = function () {
+window.onbeforeunload = function() {
   sendMessage('bye');
 };
 
@@ -149,19 +100,13 @@ function createPeerConnection() {
   try {
     pc = new RTCPeerConnection(null);
     dataSendChannel = pc.createDataChannel('sendDataChannel')
-    pc.ondatachannel = function (event) {
+    pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
-      dataReceiveChannel.onmessage = function (event) {
-        // let mouse=JSON.parse(event.data)
-        let inputStr=event.data
-        // xhr.open("GET", "http://localhost:7890/?"+inputStr);
-        // xhr.send()
-        socketLocal.emit('input', inputStr)
+      dataReceiveChannel.onmessage = function(event) {
+        console.log(event.data)
       }
     }
     pc.onicecandidate = handleIceCandidate;
-    pc.onaddstream = handleRemoteStreamAdded;
-    pc.onremovestream = handleRemoteStreamRemoved;
     console.log('Created RTCPeerConnnection');
   } catch (e) {
     console.log('Failed to create PeerConnection, exception: ' + e.message);
@@ -171,7 +116,7 @@ function createPeerConnection() {
 }
 
 function handleIceCandidate(event) {
-  console.log('icecandidate event: ', event);
+  // console.log('icecandidate event: ', event);
   if (event.candidate) {
     sendMessage({
       type: 'candidate',
@@ -217,16 +162,6 @@ function onCreateSessionDescriptionError(error) {
   trace('Failed to create session description: ' + error.toString());
 }
 
-function handleRemoteStreamAdded(event) {
-  console.log('Remote stream added.');
-  remoteStream = event.stream;
-  remoteVideo.srcObject = remoteStream;
-}
-
-function handleRemoteStreamRemoved(event) {
-  console.log('Remote stream removed. Event: ', event);
-}
-
 function hangup() {
   console.log('Hanging up.');
   stop();
@@ -244,15 +179,3 @@ function stop() {
   pc.close();
   pc = null;
 }
-
-
-
-
-
-
-
-
-
-
-
-

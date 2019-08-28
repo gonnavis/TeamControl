@@ -78,11 +78,10 @@ socket.on('message', function(message) {
 
 
 function maybeStart() {
-  console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
-  if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+  console.log('>>>>>>> maybeStart() ', isStarted, isChannelReady);
+  if (!isStarted && isChannelReady) {
     console.log('>>>>>> creating peer connection');
     createPeerConnection();
-    pc.addStream(localStream);
     isStarted = true;
     console.log('isInitiator', isInitiator);
     if (isInitiator) {
@@ -108,8 +107,6 @@ function createPeerConnection() {
       }
     }
     pc.onicecandidate = handleIceCandidate;
-    pc.onaddstream = handleRemoteStreamAdded;
-    pc.onremovestream = handleRemoteStreamRemoved;
     console.log('Created RTCPeerConnnection');
   } catch (e) {
     console.log('Failed to create PeerConnection, exception: ' + e.message);
@@ -119,7 +116,7 @@ function createPeerConnection() {
 }
 
 function handleIceCandidate(event) {
-  console.log('icecandidate event: ', event);
+  // console.log('icecandidate event: ', event);
   if (event.candidate) {
     sendMessage({
       type: 'candidate',
@@ -163,10 +160,6 @@ function setLocalAndSendMessage(sessionDescription) {
 
 function onCreateSessionDescriptionError(error) {
   trace('Failed to create session description: ' + error.toString());
-}
-
-function handleRemoteStreamRemoved(event) {
-  console.log('Remote stream removed. Event: ', event);
 }
 
 function hangup() {
