@@ -3,15 +3,8 @@
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
-var localStream;
 var pc;
-var remoteStream;
-// var maxBandwidth = 64
-var videoWidth = 1024
-var isControllee = location.href.indexOf('controllee') >= 0
 var dataSendChannel
-var dataReceiveChannel
-var remoteVideo = document.getElementById('remoteVideo')
 
 /////////////////////////////////////////////
 
@@ -24,102 +17,27 @@ if (room !== '') {
   console.log('Attempted to create or  join room', room);
 }
 
-
-
-
-remoteVideo.addEventListener('mousemove', e => {
-  if (!dataSendChannel) return
-  e.preventDefault()
-  dataSendChannel.send(JSON.stringify({
-    type: 'mousemove',
-    button: e.button,
-    x: e.offsetX / remoteVideo.offsetWidth,
-    y: e.offsetY / remoteVideo.offsetHeight,
-  }));
-})
-
-remoteVideo.addEventListener('mousedown', e => {
-  if (!dataSendChannel) return
-  e.preventDefault()
-  dataSendChannel.send(JSON.stringify({
-    type: 'mousedown',
-    button: e.button,
-  }));
-})
-
-remoteVideo.addEventListener('mouseup', e => {
-  if (!dataSendChannel) return
-  e.preventDefault()
-  dataSendChannel.send(JSON.stringify({
-    type: 'mouseup',
-    button: e.button,
-  }));
-})
-
-remoteVideo.addEventListener('mousewheel', e => {
-  if (!dataSendChannel) return
-  e.preventDefault()
-  dataSendChannel.send(JSON.stringify({
-    type: 'mousewheel',
-    button: e.button,
-    x: e.deltaX,
-    y: e.deltaY,
-  }));
-})
-
-remoteVideo.addEventListener('contextmenu', e => {
-  e.preventDefault()
-})
-
-window.addEventListener('keydown', e => {
-  if (!dataSendChannel) return
-  e.preventDefault()
-  dataSendChannel.send(JSON.stringify({
-    type: 'keydown',
-    key: e.key,
-    // alt: e.altKey ? 1 : 0,
-    // ctrl: e.ctrlKey ? 1 : 0,
-    // meta: e.metaKey ? 1 : 0,
-    // shift: e.shiftKey ? 1 : 0,
-  }));
-})
-
-window.addEventListener('keyup', e => {
-  if (!dataSendChannel) return
-  e.preventDefault()
-  dataSendChannel.send(JSON.stringify({
-    type: 'keyup',
-    key: e.key,
-    // alt: e.altKey ? 1 : 0,
-    // ctrl: e.ctrlKey ? 1 : 0,
-    // meta: e.metaKey ? 1 : 0,
-    // shift: e.shiftKey ? 1 : 0,
-  }));
-})
-
-
-
-socket.on('created', function (room) {
+socket.on('created', function(room) {
   console.log('Created room ' + room);
   isInitiator = true;
 });
 
-socket.on('full', function (room) {
+socket.on('full', function(room) {
   console.log('Room ' + room + ' is full');
 });
 
-socket.on('join', function (room) {
+socket.on('join', function(room) {
   console.log('Another peer made a request to join room ' + room);
   console.log('This peer is the initiator of room ' + room + '!');
   isChannelReady = true;
 });
 
-socket.on('joined', function (room) {
+socket.on('joined', function(room) {
   console.log('joined: ' + room);
   isChannelReady = true;
 });
 
-socket.on('log', function (array) {
+socket.on('log', function(array) {
   console.log.apply(console, array);
 });
 
@@ -131,7 +49,7 @@ function sendMessage(message) {
 }
 
 // This client receives a message
-socket.on('message', function (message) {
+socket.on('message', function(message) {
   console.log('Client received message:', message);
   if (message === 'got user media') {
     maybeStart();
@@ -158,47 +76,6 @@ socket.on('message', function (message) {
 
 ////////////////////////////////////////////////////
 
-var localVideo = document.querySelector('#localVideo');
-var remoteVideo = document.querySelector('#remoteVideo');
-
-if (isControllee) {
-  navigator.mediaDevices.getDisplayMedia({
-      audio: false,
-      video: {
-        width: videoWidth
-      },
-    })
-    .then(gotStream)
-    .catch(function (e) {
-      console.log('getUserMedia() error: ' + e.name);
-    });
-} else {
-
-  gotStream(new MediaStream())
-
-  // createPeerConnection();
-
-  // navigator.mediaDevices.getUserMedia({
-  //     audio: false,
-  //     video: {
-  //       width: videoWidth
-  //     },
-  //   })
-  //   .then(gotStream)
-  //   .catch(function (e) {
-  //     console.log('getUserMedia() error: ' + e.name);
-  //   });
-}
-
-function gotStream(stream) {
-  console.log('Adding local stream.');
-  localStream = stream;
-  localVideo.srcObject = stream;
-  sendMessage('got user media');
-  if (isInitiator) {
-    maybeStart();
-  }
-}
 
 function maybeStart() {
   console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
@@ -214,7 +91,7 @@ function maybeStart() {
   }
 }
 
-window.onbeforeunload = function () {
+window.onbeforeunload = function() {
   sendMessage('bye');
 };
 
@@ -224,9 +101,9 @@ function createPeerConnection() {
   try {
     pc = new RTCPeerConnection(null);
     dataSendChannel = pc.createDataChannel('sendDataChannel')
-    pc.ondatachannel = function (event) {
+    pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
-      dataReceiveChannel.onmessage = function (event) {
+      dataReceiveChannel.onmessage = function(event) {
         console.log(event.data)
       }
     }
@@ -286,12 +163,6 @@ function setLocalAndSendMessage(sessionDescription) {
 
 function onCreateSessionDescriptionError(error) {
   trace('Failed to create session description: ' + error.toString());
-}
-
-function handleRemoteStreamAdded(event) {
-  console.log('Remote stream added.');
-  remoteStream = event.stream;
-  remoteVideo.srcObject = remoteStream;
 }
 
 function handleRemoteStreamRemoved(event) {
