@@ -4,6 +4,7 @@ var isInitiator = false;
 var isStarted = false;
 var pc;
 var dataSendChannel
+var dataReceiveChannel
 
 /////////////////////////////////////////////
 
