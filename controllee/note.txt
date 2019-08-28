@@ -1,0 +1,89 @@
+main.js:28 Attempted to create or  join room ttt
+main.js:52 Message from server: Received request to create or join room ttt
+main.js:52 Message from server: Room ttt now has 0 client(s)
+main.js:52 Message from server: Client ID Cjp59QPwZE5zvD_cAACk created room ttt
+main.js:32 Created room ttt
+main.js:119 Adding local stream.
+main.js:58 Client sending message:  got user media
+main.js:129 >>>>>>> maybeStart()  false MediaStream false
+main.js:52 Message from server: Client said:  got user media
+main.js:41 Another peer made a request to join room ttt
+main.js:42 This peer is the initiator of room ttt!
+main.js:64 Client received message: got user media
+main.js:129 >>>>>>> maybeStart()  false MediaStream {id: "Un0dYpCoupVMv4uqssyaXylfwftrUdCwABTI", active: true, onaddtrack: null, onremovetrack: null, onactive: null, …} true
+main.js:131 >>>>>> creating peer connection
+main.js:165 Created RTCPeerConnnection
+main.js:135 isInitiator true
+main.js:192 Sending offer to peer
+main.js:212 setLocalAndSendMessage sending message RTCSessionDescription {type: "offer", sdp: "v=0
+↵o=- 8828008736651994600 2 IN IP4 127.0.0.1
+↵s…a=mid:1
+↵a=sctpmap:5000 webrtc-datachannel 1024
+↵"}
+main.js:58 Client sending message:  RTCSessionDescription {type: "offer", sdp: "v=0
+↵o=- 8828008736651994600 2 IN IP4 127.0.0.1
+↵s…a=mid:1
+↵a=sctpmap:5000 webrtc-datachannel 1024
+↵"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:2999745851 1 udp 2122260223 192.168.56.1…835 typ host generation 0 ufrag cqIc network-id 2"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:2534616982 1 udp 2122194687 192.168.230.…836 typ host generation 0 ufrag cqIc network-id 3"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:376141290 1 udp 2122129151 192.168.229.1…837 typ host generation 0 ufrag cqIc network-id 4"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:2588195999 1 udp 2122063615 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:2999745851 1 udp 2122260223 192.168.56.1…839 typ host generation 0 ufrag cqIc network-id 2"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:2534616982 1 udp 2122194687 192.168.230.…840 typ host generation 0 ufrag cqIc network-id 3"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:376141290 1 udp 2122129151 192.168.229.1…841 typ host generation 0 ufrag cqIc network-id 4"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:2588195999 1 udp 2122063615 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:52 Message from server: Client said:  {type: "offer", sdp: "v=0
+↵o=- 8828008736651994600 2 IN IP4 127.0.0.1
+↵s…a=mid:1
+↵a=sctpmap:5000 webrtc-datachannel 1024
+↵"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:2999745851 1 udp 2122260223 192.168.56.1…835 typ host generation 0 ufrag cqIc network-id 2"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:2534616982 1 udp 2122194687 192.168.230.…836 typ host generation 0 ufrag cqIc network-id 3"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:376141290 1 udp 2122129151 192.168.229.1…837 typ host generation 0 ufrag cqIc network-id 4"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:2588195999 1 udp 2122063615 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:2999745851 1 udp 2122260223 192.168.56.1…839 typ host generation 0 ufrag cqIc network-id 2"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:2534616982 1 udp 2122194687 192.168.230.…840 typ host generation 0 ufrag cqIc network-id 3"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:376141290 1 udp 2122129151 192.168.229.1…841 typ host generation 0 ufrag cqIc network-id 4"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:2588195999 1 udp 2122063615 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:4233069003 1 tcp 1518280447 192.168.56.1…ptype active generation 0 ufrag cqIc network-id 2"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:3650147174 1 tcp 1518214911 192.168.230.…ptype active generation 0 ufrag cqIc network-id 3"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:1491634458 1 tcp 1518149375 192.168.229.…ptype active generation 0 ufrag cqIc network-id 4"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 0, id: "0", candidate: "candidate:3569827951 1 tcp 1518083839 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:4233069003 1 tcp 1518280447 192.168.56.1…ptype active generation 0 ufrag cqIc network-id 2"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:3650147174 1 tcp 1518214911 192.168.230.…ptype active generation 0 ufrag cqIc network-id 3"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:1491634458 1 tcp 1518149375 192.168.229.…ptype active generation 0 ufrag cqIc network-id 4"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: RTCIceCandidate, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:58 Client sending message:  {type: "candidate", label: 1, id: "1", candidate: "candidate:3569827951 1 tcp 1518083839 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:174 icecandidate event:  RTCPeerConnectionIceEvent {isTrusted: true, candidate: null, type: "icecandidate", target: RTCPeerConnection, currentTarget: RTCPeerConnection, …}
+main.js:183 End of candidates.
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:4233069003 1 tcp 1518280447 192.168.56.1…ptype active generation 0 ufrag cqIc network-id 2"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:3650147174 1 tcp 1518214911 192.168.230.…ptype active generation 0 ufrag cqIc network-id 3"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:1491634458 1 tcp 1518149375 192.168.229.…ptype active generation 0 ufrag cqIc network-id 4"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 0, id: "0", candidate: "candidate:3569827951 1 tcp 1518083839 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:4233069003 1 tcp 1518280447 192.168.56.1…ptype active generation 0 ufrag cqIc network-id 2"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:3650147174 1 tcp 1518214911 192.168.230.…ptype active generation 0 ufrag cqIc network-id 3"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:1491634458 1 tcp 1518149375 192.168.229.…ptype active generation 0 ufrag cqIc network-id 4"}
+main.js:52 Message from server: Client said:  {type: "candidate", label: 1, id: "1", candidate: "candidate:3569827951 1 tcp 1518083839 172.30.78.14…eration 0 ufrag cqIc network-id 1 network-cost 10"}
+main.js:64 Client received message: {type: "answer", sdp: "v=0
+↵o=- 5639793498432429295 2 IN IP4 127.0.0.1
+↵s…a=mid:1
+↵a=sctpmap:5000 webrtc-datachannel 1024
+↵"}
+main.js:64 Client received message: {type: "candidate", label: 0, id: "0", candidate: "candidate:1940350144 1 udp 2122260223 172.30.67.80…eration 0 ufrag LRQU network-id 1 network-cost 10"}
+main.js:64 Client received message: {type: "candidate", label: 0, id: "0", candidate: "candidate:1025808432 1 tcp 1518280447 172.30.67.80…eration 0 ufrag LRQU network-id 1 network-cost 10"}
