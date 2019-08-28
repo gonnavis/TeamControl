@@ -1,4 +1,3 @@
-'use strict';
 
 var isChannelReady = false;
 var isInitiator = false;
