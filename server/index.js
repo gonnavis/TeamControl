@@ -13,6 +13,8 @@ var app = https.createServer(options,function(req, res) {
   fileServer.serve(req, res);
 }).listen(443);
 
+console.log('listening on port: 443')
+
 var io = socketIO.listen(app);
 io.sockets.on('connection', function(socket) {
 

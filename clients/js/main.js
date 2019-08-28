@@ -1,10 +1,10 @@
-'use strict';
 
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
 var pc;
 var dataSendChannel
+var dataReceiveChannel
 
 /////////////////////////////////////////////
 
@@ -35,6 +35,7 @@ socket.on('join', function(room) {
 socket.on('joined', function(room) {
   console.log('joined: ' + room);
   isChannelReady = true;
+  sendMessage('let us connect webrtc')
 });
 
 socket.on('log', function(array) {
@@ -51,7 +52,7 @@ function sendMessage(message) {
 // This client receives a message
 socket.on('message', function(message) {
   console.log('Client received message:', message);
-  if (message === 'got user media') {
+  if (message === 'let us connect webrtc') {
     maybeStart();
   } else if (message.type === 'offer') {
     if (!isInitiator && !isStarted) {
@@ -116,7 +117,7 @@ function createPeerConnection() {
 }
 
 function handleIceCandidate(event) {
-  // console.log('icecandidate event: ', event);
+  console.log('icecandidate event: ', event);
   if (event.candidate) {
     sendMessage({
       type: 'candidate',
