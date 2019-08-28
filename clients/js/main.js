@@ -116,7 +116,7 @@ function createPeerConnection() {
 }
 
 function handleIceCandidate(event) {
-  // console.log('icecandidate event: ', event);
+  console.log('icecandidate event: ', event);
   if (event.candidate) {
     sendMessage({
       type: 'candidate',
