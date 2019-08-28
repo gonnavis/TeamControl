@@ -1,6 +1,8 @@
 
 https://www.gonnavis.com/clients/
 
+不能同时开三个浏览器!!!
+
 console
   any client
     dataSendChannel.send('hello')
