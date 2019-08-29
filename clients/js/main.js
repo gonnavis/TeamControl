@@ -49,14 +49,14 @@ function onReceiveMessageCallback(event) {
   // we are assuming that our signaling protocol told
   // about the expected file size (and name, hash, etc).
   const file = fileInput.files[0];
-  if (receivedSize === file.size) {
+  if (receivedSize === file_size) {
     const received = new Blob(receiveBuffer);
     receiveBuffer = [];
 
     downloadAnchor.href = URL.createObjectURL(received);
     downloadAnchor.download = file.name;
     downloadAnchor.textContent =
-      `Click to download '${file.name}' (${file.size} bytes)`;
+      `Click to download '${file.name}' (${file_size} bytes)`;
     downloadAnchor.style.display = 'block';
 
     const bitrate = Math.round(receivedSize * 8 /
