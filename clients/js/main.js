@@ -3,7 +3,10 @@
 let isChannelReady = false;
 let isInitiator = false;
 let isStarted = false;
+
 let file_size = 5642623
+let file_name = 'webrtc_filetransfer_test.mp4'
+
 let is_sender = false
 
 let localConnection;
@@ -54,9 +57,9 @@ function onReceiveMessageCallback(event) {
     receiveBuffer = [];
 
     downloadAnchor.href = URL.createObjectURL(received);
-    downloadAnchor.download = file.name;
+    downloadAnchor.download = file_name;
     downloadAnchor.textContent =
-      `Click to download '${file.name}' (${file_size} bytes)`;
+      `Click to download '${file_name}' (${file_size} bytes)`;
     downloadAnchor.style.display = 'block';
 
     const bitrate = Math.round(receivedSize * 8 /
