@@ -1,5 +1,7 @@
 'use strict';
 
+// ok
+
 let isChannelReady = false;
 let isInitiator = false;
 let isStarted = false;
