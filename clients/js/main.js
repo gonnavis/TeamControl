@@ -340,7 +340,7 @@ socket.on('log', function(array) {
 
 // This client receives a message
 socket.on('message', function(message) {
-  console.log('Client received message:', message);
+  console.log('Client received message:', message.type);
   if (message === 'let us connect webrtc') {
     maybeStart();
   } else if (message.type === 'offer') {
