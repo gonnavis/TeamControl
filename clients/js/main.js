@@ -333,7 +333,7 @@ socket.on('joined', function(room) {
 });
 
 socket.on('log', function(array) {
-  console.log.apply(console, array);
+  // console.log.apply(console, array);
 });
 
 ////////////////////////////////////////////////

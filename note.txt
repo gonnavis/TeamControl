@@ -6,3 +6,11 @@ https://www.gonnavis.com/clients/
 console
   any client
     dataSendChannel.send('hello')
+
+function order after webrtc connected
+  sender
+    handleFileInputChange
+    sendData
+  receiver
+    345 onReceiveMessageCallback
+    closeDataChannels
