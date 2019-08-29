@@ -90,7 +90,7 @@ async function handleFileInputChange() {
 }
 
 function sendMessage(message) {
-  console.log('sendMessage: ', message)
+  console.log('sendMessage: ', message.type ? message.type : message)
   // console.log('Client sending message: ', message);
   socket.emit('message', message);
 }
