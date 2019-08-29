@@ -381,8 +381,8 @@ function receiveChannelCallback(event) {
   receiveChannel = event.channel;
   receiveChannel.binaryType = 'arraybuffer';
   receiveChannel.onmessage = onReceiveMessageCallback;
-  receiveChannel.onopen = onReceiveChannelStateChange;
-  receiveChannel.onclose = onReceiveChannelStateChange;
+  // receiveChannel.onopen = onReceiveChannelStateChange;
+  // receiveChannel.onclose = onReceiveChannelStateChange;
 
   receivedSize = 0;
   bitrateMax = 0;
