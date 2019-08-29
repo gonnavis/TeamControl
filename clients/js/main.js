@@ -6,8 +6,8 @@ let isChannelReady = false;
 let isInitiator = false;
 let isStarted = false;
 
-let file_size = 5642623
-let file_name = 'webrtc_filetransfer_test.mp4'
+let config_file_size = 5642623
+let config_file_name = 'webrtc_filetransfer_test.mp4'
 
 let is_sender = false
 
@@ -54,14 +54,14 @@ function onReceiveMessageCallback(event) {
   // we are assuming that our signaling protocol told
   // about the expected file size (and name, hash, etc).
   const file = fileInput.files[0];
-  if (receivedSize === file_size) {
+  if (receivedSize === config_file_size) {
     const received = new Blob(receiveBuffer);
     receiveBuffer = [];
 
     downloadAnchor.href = URL.createObjectURL(received);
-    downloadAnchor.download = file_name;
+    downloadAnchor.download = config_file_name;
     downloadAnchor.textContent =
-      `Click to download '${file_name}' (${file_size} bytes)`;
+      `Click to download '${config_file_name}' (${config_file_size} bytes)`;
     downloadAnchor.style.display = 'block';
 
     const bitrate = Math.round(receivedSize * 8 /
@@ -112,8 +112,8 @@ function sendData() {
     closeDataChannels();
     return;
   }
-  sendProgress.max = file_size;
-  receiveProgress.max = file_size;
+  sendProgress.max = config_file_size;
+  receiveProgress.max = config_file_size;
   const chunkSize = 16384;
   fileReader = new FileReader();
   let offset = 0;
@@ -124,7 +124,7 @@ function sendData() {
     sendChannel.send(e.target.result);
     offset += e.target.result.byteLength;
     sendProgress.value = offset;
-    if (offset < file_size) {
+    if (offset < config_file_size) {
       readSlice(offset);
     }
   });
