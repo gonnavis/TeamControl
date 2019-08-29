@@ -37,7 +37,7 @@ sendFileButton.addEventListener('click', () => sendData());
 fileInput.addEventListener('change', handleFileInputChange, false);
 abortButton.addEventListener('click', () => {
   if (fileReader && fileReader.readyState === 1) {
-    console.log('Abort read!');
+    // console.log('Abort read!');
     fileReader.abort();
   }
 });
@@ -45,7 +45,8 @@ abortButton.addEventListener('click', () => {
 /////////////////////////////////////////////////////////
 
 function onReceiveMessageCallback(event) {
-  console.log(`Received Message ${event.data.byteLength}`);
+  console.log('onReceiveMessageCallback')
+  // console.log(`Received Message ${event.data.byteLength}`);
   receiveBuffer.push(event.data);
   receivedSize += event.data.byteLength;
 
@@ -77,23 +78,25 @@ function onReceiveMessageCallback(event) {
   }
 }
 
-async function createConnection() {}
 
 async function handleFileInputChange() {
+  console.log('handleFileInputChange')
   let file = fileInput.files[0];
   if (!file) {
-    console.log('No file chosen');
+    // console.log('No file chosen');
   } else {
     sendFileButton.disabled = false;
   }
 }
 
 function sendMessage(message) {
-  console.log('Client sending message: ', message);
+  console.log('sendMessage')
+  // console.log('Client sending message: ', message);
   socket.emit('message', message);
 }
 
 function sendData() {
+  console.log('sendData')
   is_sender = true
   abortButton.disabled = false;
   sendFileButton.disabled = true;
@@ -101,7 +104,7 @@ function sendData() {
   fileInput.disabled = true;
 
   const file = fileInput.files[0];
-  console.log(`File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`);
+  // console.log(`File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`);
 
   // Handle 0 size files.
   statusMessage.textContent = '';
@@ -118,9 +121,11 @@ function sendData() {
   fileReader = new FileReader();
   let offset = 0;
   fileReader.addEventListener('error', error => console.error('Error reading file:', error));
-  fileReader.addEventListener('abort', event => console.log('File reading aborted:', event));
+  fileReader.addEventListener('abort', event => {
+    // console.log('File reading aborted:', event)
+  });
   fileReader.addEventListener('load', e => {
-    console.log('FileRead.onload ', e);
+    // console.log('FileRead.onload ', e);
     sendChannel.send(e.target.result);
     offset += e.target.result.byteLength;
     sendProgress.value = offset;
@@ -129,7 +134,7 @@ function sendData() {
     }
   });
   const readSlice = o => {
-    console.log('readSlice ', o);
+    // console.log('readSlice ', o);
     const slice = file.slice(offset, o + chunkSize);
     fileReader.readAsArrayBuffer(slice);
   };
@@ -137,16 +142,17 @@ function sendData() {
 }
 
 function closeDataChannels() {
-  console.log('Closing data channels');
+  console.log('closeDataChannels')
+  // console.log('Closing data channels');
   sendChannel.close();
-  console.log(`Closed data channel with label: ${sendChannel.label}`);
+  // console.log(`Closed data channel with label: ${sendChannel.label}`);
   if (receiveChannel) {
     receiveChannel.close();
-    console.log(`Closed data channel with label: ${receiveChannel.label}`);
+    // console.log(`Closed data channel with label: ${receiveChannel.label}`);
   }
   localConnection.close();
   localConnection = null;
-  console.log('Closed peer connections');
+  // console.log('Closed peer connections');
 
   // re-enable the file select
   fileInput.disabled = false;
@@ -155,22 +161,24 @@ function closeDataChannels() {
 }
 
 function createPeerConnection() {
+  console.log('createPeerConnection')
   try {
     localConnection = new RTCPeerConnection(null);
     sendChannel = localConnection.createDataChannel('sendDataChannel')
     sendChannel.binaryType = 'arraybuffer';
     localConnection.ondatachannel = receiveChannelCallback
     localConnection.onicecandidate = handleIceCandidate;
-    console.log('Created RTCPeerConnnection');
+    // console.log('Created RTCPeerConnnection');
   } catch (e) {
-    console.log('Failed to create PeerConnection, exception: ' + e.message);
-    console.log('Cannot create RTCPeerConnection object.');
+    // console.log('Failed to create PeerConnection, exception: ' + e.message);
+    // console.log('Cannot create RTCPeerConnection object.');
     return;
   }
 }
 
 function handleIceCandidate(event) {
-  console.log('icecandidate event: ', event);
+  console.log('handleIceCandidate')
+  // console.log('icecandidate event: ', event);
   if (event.candidate) {
     sendMessage({
       type: 'candidate',
@@ -179,16 +187,18 @@ function handleIceCandidate(event) {
       candidate: event.candidate.candidate
     });
   } else {
-    console.log('End of candidates.');
+    // console.log('End of candidates.');
   }
 }
 
 function handleCreateOfferError(event) {
-  console.log('createOffer() error: ', event);
+  console.log('handleCreateOfferError')
+  // console.log('createOffer() error: ', event);
 }
 
 function doCall() {
-  console.log('Sending offer to peer');
+  console.log('doCall')
+  // console.log('Sending offer to peer');
   localConnection.createOffer(setLocalAndSendMessage, handleCreateOfferError, {
     offerToReceiveAudio: 0,
     offerToReceiveVideo: 0
@@ -196,7 +206,8 @@ function doCall() {
 }
 
 function doAnswer() {
-  console.log('Sending answer to peer.');
+  console.log('doAnswer')
+  // console.log('Sending answer to peer.');
   localConnection.createAnswer({
     offerToReceiveAudio: 0,
     offerToReceiveVideo: 1
@@ -207,28 +218,33 @@ function doAnswer() {
 }
 
 function setLocalAndSendMessage(sessionDescription) {
+  console.log('setLocalAndSendMessage')
   localConnection.setLocalDescription(sessionDescription)
-  console.log('setLocalAndSendMessage sending message', sessionDescription);
+  // console.log('setLocalAndSendMessage sending message', sessionDescription);
   sendMessage(sessionDescription);
 }
 
 function onCreateSessionDescriptionError(error) {
+  console.log('onCreateSessionDescriptionError')
   trace('Failed to create session description: ' + error.toString());
 }
 
 function hangup() {
-  console.log('Hanging up.');
+  console.log('hangup')
+  // console.log('Hanging up.');
   stop();
   sendMessage('bye');
 }
 
 function handleRemoteHangup() {
-  console.log('Session terminated.');
+  console.log('handleRemoteHangup')
+  // console.log('Session terminated.');
   stop();
   isInitiator = false;
 }
 
 function stop() {
+  console.log('stop')
   isStarted = false;
   localConnection.close();
   localConnection = null;
@@ -253,12 +269,13 @@ function stop() {
 
 
 function maybeStart() {
-  console.log('>>>>>>> maybeStart() ', isStarted, isChannelReady);
+  console.log('maybeStart')
+  // console.log('>>>>>>> maybeStart() ', isStarted, isChannelReady);
   if (!isStarted && isChannelReady) {
-    console.log('>>>>>> creating peer connection');
+    // console.log('>>>>>> creating peer connection');
     createPeerConnection();
     isStarted = true;
-    console.log('isInitiator', isInitiator);
+    // console.log('isInitiator', isInitiator);
     if (isInitiator) {
       doCall();
     }
@@ -266,6 +283,7 @@ function maybeStart() {
 }
 
 window.onbeforeunload = function() {
+  console.log('onbeforeunload')
   sendMessage('bye');
 };
 
@@ -290,7 +308,7 @@ var socket = io.connect();
 
 if (room !== '') {
   socket.emit('create or join', room);
-  console.log('Attempted to create or  join room', room);
+  // console.log('Attempted to create or  join room', room);
 }
 
 socket.on('created', function(room) {
@@ -364,25 +382,28 @@ socket.on('message', function(message) {
 
 
 async function gotLocalDescription(desc) {
+  console.log('gotLocalDescription')
   await localConnection.setLocalDescription(desc);
-  console.log(`Offer from localConnection\n ${desc.sdp}`);
+  // console.log(`Offer from localConnection\n ${desc.sdp}`);
   await remoteConnection.setRemoteDescription(desc);
   try {
     const answer = await remoteConnection.createAnswer();
     await gotRemoteDescription(answer);
   } catch (e) {
-    console.log('Failed to create session description: ', e);
+    // console.log('Failed to create session description: ', e);
   }
 }
 
 async function gotRemoteDescription(desc) {
+  console.log('gotRemoteDescription')
   await remoteConnection.setLocalDescription(desc);
-  console.log(`Answer from remoteConnection\n ${desc.sdp}`);
+  // console.log(`Answer from remoteConnection\n ${desc.sdp}`);
   await localConnection.setRemoteDescription(desc);
 }
 
 function receiveChannelCallback(event) {
-  console.log('Receive Channel Callback');
+  console.log('receiveChannelCallback')
+  // console.log('Receive Channel Callback');
   receiveChannel = event.channel;
   receiveChannel.binaryType = 'arraybuffer';
   receiveChannel.onmessage = onReceiveMessageCallback;
@@ -400,8 +421,9 @@ function receiveChannelCallback(event) {
 }
 
 async function onReceiveChannelStateChange() {
+  console.log('onReceiveChannelStateChange')
   const readyState = receiveChannel.readyState;
-  console.log(`Receive channel state is: ${readyState}`);
+  // console.log(`Receive channel state is: ${readyState}`);
   if (readyState === 'open') {
     timestampStart = (new Date()).getTime();
     timestampPrev = timestampStart;
@@ -412,6 +434,7 @@ async function onReceiveChannelStateChange() {
 
 // display bitrate statistics.
 async function displayStats() {
+  console.log('displayStats')
   if (remoteConnection && remoteConnection.iceConnectionState === 'connected') {
     const stats = await remoteConnection.getStats();
     let activeCandidatePair;
