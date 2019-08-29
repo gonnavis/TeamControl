@@ -7,6 +7,60 @@ console
   any client
     dataSendChannel.send('hello')
 
+function order after webrtc
+  sender
+    Created room vvv
+    Client received message: undefined
+    Another peer made a request to join room vvv
+    This peer is the initiator of room vvv!
+    Client received message: undefined
+    maybeStart
+    createPeerConnection
+    doCall
+    setLocalAndSendMessage
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    Client received message: answer
+    2 Client received message: candidate
+    receiveChannelCallback
+    handleFileInputChange
+    sendData
+  receiver
+    joined: vvv
+    sendMessage
+    Client received message: offer
+    maybeStart
+    createPeerConnection
+    doAnswer
+    2 Client received message: candidate
+    setLocalAndSendMessage
+    sendMessage
+    handleIceCandidate
+    sendMessage
+    6 Client received message: candidate
+    handleIceCandidate
+    sendMessage
+    handleIceCandidate
+    receiveChannelCallback
+    345 onReceiveMessageCallback
+    closeDataChannels
+
 function order after webrtc connected
   sender
     handleFileInputChange
