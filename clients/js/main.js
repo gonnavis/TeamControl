@@ -90,7 +90,7 @@ async function handleFileInputChange() {
 }
 
 function sendMessage(message) {
-  console.log('sendMessage')
+  console.log('sendMessage: ' + message)
   // console.log('Client sending message: ', message);
   socket.emit('message', message);
 }
@@ -340,7 +340,7 @@ socket.on('log', function(array) {
 
 // This client receives a message
 socket.on('message', function(message) {
-  console.log('Client received message:', message.type);
+  console.log('Client received message:', message.type ? message.type : message);
   if (message === 'let us connect webrtc') {
     maybeStart();
   } else if (message.type === 'offer') {
