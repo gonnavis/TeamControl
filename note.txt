@@ -9,53 +9,54 @@ console
 
 function order after webrtc
   sender
-    Created room vvv
-    Client received message: undefined
-    Another peer made a request to join room vvv
-    This peer is the initiator of room vvv!
-    Client received message: undefined
+    Created room ddd
+    Client received message: bye
+    Another peer made a request to join room ddd
+    This peer is the initiator of room ddd!
+    Client received message: let us connect webrtc
     maybeStart
     createPeerConnection
     doCall
     setLocalAndSendMessage
-    sendMessage
+    sendMessage:  offer
     handleIceCandidate
-    sendMessage
+    sendMessage:  candidate
     handleIceCandidate
-    sendMessage
+    sendMessage:  candidate
     handleIceCandidate
-    sendMessage
+    sendMessage:  candidate
     handleIceCandidate
-    sendMessage
-    handleIceCandidate
-    sendMessage
-    handleIceCandidate
-    sendMessage
-    handleIceCandidate
-    sendMessage
-    handleIceCandidate
-    sendMessage
-    handleIceCandidate
+    sendMessage:  candidate
     Client received message: answer
+    handleIceCandidate
+    sendMessage:  candidate
+    handleIceCandidate
+    sendMessage:  candidate
+    handleIceCandidate
+    sendMessage:  candidate
+    handleIceCandidate
+    sendMessage:  candidate
+    handleIceCandidate
     2 Client received message: candidate
     receiveChannelCallback
     handleFileInputChange
     sendData
   receiver
-    joined: vvv
-    sendMessage
+    joined: ddd
+    sendMessage:  let us connect webrtc
     Client received message: offer
     maybeStart
     createPeerConnection
     doAnswer
-    2 Client received message: candidate
+    3 Client received message: candidate
     setLocalAndSendMessage
-    sendMessage
+    sendMessage:  answer
     handleIceCandidate
-    sendMessage
-    6 Client received message: candidate
+    sendMessage:  candidate
+    Client received message: candidate
+    4 Client received message: candidate
     handleIceCandidate
-    sendMessage
+    sendMessage:  candidate
     handleIceCandidate
     receiveChannelCallback
     345 onReceiveMessageCallback
