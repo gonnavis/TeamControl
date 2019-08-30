@@ -69,3 +69,45 @@ function order after webrtc connected
   receiver
     345 onReceiveMessageCallback
     closeDataChannels
+
+
+4G error
+Created room ddd
+  Another peer made a request to join room ddd
+  This peer is the initiator of room ddd!
+  Client received message: let us connect webrtc
+  maybeStart
+  createPeerConnection
+  doCall
+  setLocalAndSendMessage
+  sendMessage:  offer
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  sendMessage:  candidate
+  handleIceCandidate
+  Client received message: answer
+  Client received message: candidate
+  handleFileInputChange
+  sendData
+  Failed to execute 'send' on 'RTCDataChannel': RTCDataChannel.readyState is not 'open'

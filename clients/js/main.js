@@ -163,7 +163,9 @@ function closeDataChannels() {
 function createPeerConnection() {
   console.log('createPeerConnection')
   try {
-    localConnection = new RTCPeerConnection(null);
+    localConnection = new RTCPeerConnection(JSON.parse(
+      '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
+    ));
     sendChannel = localConnection.createDataChannel('sendDataChannel')
     sendChannel.binaryType = 'arraybuffer';
     localConnection.ondatachannel = receiveChannelCallback
