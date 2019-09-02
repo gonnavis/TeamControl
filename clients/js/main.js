@@ -74,7 +74,7 @@ socket.on('message', function(message) {
     }
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
-      sdpMid: sdpMid, // !!! AND THIS LINE
+      sdpMid: message.id, // !!! AND THIS LINE
       sdpMLineIndex: message.label,
       candidate: message.candidate
     });
