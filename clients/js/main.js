@@ -99,7 +99,10 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(null);
+    pc = new RTCPeerConnection(JSON.parse(
+      '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
+    ));
+    // pc = new RTCPeerConnection(null);
     dataSendChannel = pc.createDataChannel('sendDataChannel')
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
