@@ -109,12 +109,13 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(JSON.parse(
-      '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
-    ));
-    // pc = new RTCPeerConnection({
-    //   "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }]
-    // });
+    // pc = new RTCPeerConnection(JSON.parse(
+    //   '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
+    // ));
+
+    pc = new RTCPeerConnection({
+      "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }]
+    });
     
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
