@@ -65,10 +65,7 @@ socket.on('message', function(message) {
     let sessionDescription = new RTCSessionDescription(message)
     pc.setRemoteDescription(sessionDescription)
   } else if (message.type === 'candidate' && isStarted) {
-    var candidate = new RTCIceCandidate({
-      sdpMLineIndex: message.label,
-      candidate: message.candidate
-    });
+    var candidate = new RTCIceCandidate(JSON.parse(message.candidate));
     pc.addIceCandidate(candidate);
   } else if (message === 'bye' && isStarted) {
     handleRemoteHangup();
@@ -119,12 +116,15 @@ function createPeerConnection() {
 function handleIceCandidate(event) {
   console.log('icecandidate event: ', event);
   if (event.candidate) {
+    // sendMessage({
+    //   type: 'candidate',
+    //   label: event.candidate.sdpMLineIndex,
+    //   id: event.candidate.sdpMid,
+    //   candidate: event.candidate.candidate
+    // });
     sendMessage({
       type: 'candidate',
-      label: event.candidate.sdpMLineIndex,
-      id: event.candidate.sdpMid,
-      candidate: event.candidate.candidate
-      // candidate: event.candidate
+      candidate: event.candidate
     });
   } else {
     console.log('End of candidates.');
