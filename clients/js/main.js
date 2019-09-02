@@ -112,6 +112,9 @@ function createPeerConnection() {
     dataSendChannel.onopen = function() {
         console.warn("channel opened");
     };
+    dataSendChannel.onclose = function() {
+        console.warn("channel closed");
+    };
 
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
