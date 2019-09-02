@@ -4,7 +4,6 @@ var isStarted = false;
 var pc;
 var dataSendChannel
 var dataReceiveChannel
-var is_setRemoteDescription = false
 
 /////////////////////////////////////////////
 
@@ -55,30 +54,21 @@ socket.on('message', function(message) {
   if (message === 'let us connect webrtc') {
     maybeStart();
   } else if (message.type === 'offer') {
-    if (!is_setRemoteDescription) {
-      is_setRemoteDescription = true
-      if (!isInitiator && !isStarted) {
-        maybeStart();
-      }
-      let sessionDescription = new RTCSessionDescription(message)
-      pc.setRemoteDescription(sessionDescription)
-      doAnswer();
+    if (!isInitiator && !isStarted) {
+      maybeStart();
     }
+    let sessionDescription = new RTCSessionDescription(message)
+    pc.setRemoteDescription(sessionDescription)
+    doAnswer();
   } else if (message.type === 'answer' && isStarted) {
-    if (!is_setRemoteDescription) {
-      is_setRemoteDescription = true
-      // if (isInitiator) {
-      let sessionDescription = new RTCSessionDescription(message)
-      pc.setRemoteDescription(sessionDescription)
-      // }
-    }
+    let sessionDescription = new RTCSessionDescription(message)
+    pc.setRemoteDescription(sessionDescription)
   } else if (message.type === 'candidate' && isStarted) {
-    // var candidate = new RTCIceCandidate({
-    //   sdpMid: message.id, // !!! AND THIS LINE
-    //   sdpMLineIndex: message.label,
-    //   candidate: message.candidate
-    // });
-    var candidate = new RTCIceCandidate(message.candidate);
+    var candidate = new RTCIceCandidate({
+      sdpMid: message.id, // !!! AND THIS LINE
+      sdpMLineIndex: message.label,
+      candidate: message.candidate
+    });
     pc.addIceCandidate(candidate);
   } else if (message === 'bye' && isStarted) {
     handleRemoteHangup();
@@ -109,42 +99,14 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(JSON.parse(
-      '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
-    ));
-
-    // pc = new RTCPeerConnection({
-    //   "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }]
-    // });
-
+    pc = new RTCPeerConnection(null);
+    dataSendChannel = pc.createDataChannel('sendDataChannel')
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function(event) {
         console.log(event.data)
       }
     }
-
-    if (isInitiator) {
-      dataSendChannel = pc.createDataChannel('sendDataChannel', {
-        reliable: true
-      })
-      dataSendChannel.onerror = function(error) {
-        console.warn("Error:", error);
-      };
-      dataSendChannel.onmessage = function(event) {
-        console.warn("new message received");
-        console.warn("Got message:", event.data);
-      };
-      dataSendChannel.onopen = function() {
-        console.warn("channel opened");
-      };
-      dataSendChannel.onclose = function() {
-        console.warn("channel closed");
-      };
-    }
-
-
-
     pc.onicecandidate = handleIceCandidate;
     console.log('Created RTCPeerConnnection');
   } catch (e) {
@@ -157,15 +119,11 @@ function createPeerConnection() {
 function handleIceCandidate(event) {
   console.log('icecandidate event: ', event);
   if (event.candidate) {
-    // sendMessage({
-    //   type: 'candidate',
-    //   label: event.candidate.sdpMLineIndex,
-    //   id: event.candidate.sdpMid,
-    //   candidate: event.candidate.candidate
-    // });
     sendMessage({
       type: 'candidate',
-      candidate: event.candidate
+      label: event.candidate.sdpMLineIndex,
+      id: event.candidate.sdpMid,
+      candidate: event.candidate.candidate
     });
   } else {
     console.log('End of candidates.');
@@ -188,7 +146,7 @@ function doAnswer() {
   console.log('Sending answer to peer.');
   pc.createAnswer({
     offerToReceiveAudio: 0,
-    offerToReceiveVideo: 0
+    offerToReceiveVideo: 1
   }).then(
     setLocalAndSendMessage,
     onCreateSessionDescriptionError
