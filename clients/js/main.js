@@ -96,15 +96,32 @@ window.onbeforeunload = function() {
 function createPeerConnection() {
   try {
     pc = new RTCPeerConnection(null);
+
+
+
     dataSendChannel = pc.createDataChannel('sendDataChannel', {
       reliable: true
     })
+    dataSendChannel.onerror = function (error) {
+        console.warn("Error:", error);
+    };
+    dataSendChannel.onmessage = function (event) {
+        console.warn("new message received");
+        console.warn("Got message:", event.data);
+    };
+    dataSendChannel.onopen = function() {
+        console.warn("channel opened");
+    };
+
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function(event) {
         console.log(event.data)
       }
     }
+
+
+
     pc.onicecandidate = handleIceCandidate;
     console.log('Created RTCPeerConnnection');
   } catch (e) {
