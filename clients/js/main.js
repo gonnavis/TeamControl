@@ -95,25 +95,27 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(null);
+    pc = new RTCPeerConnection(JSON.parse(
+      '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
+    ));
 
 
-
+    // if(isInitiator){}
     dataSendChannel = pc.createDataChannel('sendDataChannel', {
       reliable: true
     })
-    dataSendChannel.onerror = function (error) {
-        console.warn("Error:", error);
+    dataSendChannel.onerror = function(error) {
+      console.warn("Error:", error);
     };
-    dataSendChannel.onmessage = function (event) {
-        console.warn("new message received");
-        console.warn("Got message:", event.data);
+    dataSendChannel.onmessage = function(event) {
+      console.warn("new message received");
+      console.warn("Got message:", event.data);
     };
     dataSendChannel.onopen = function() {
-        console.warn("channel opened");
+      console.warn("channel opened");
     };
     dataSendChannel.onclose = function() {
-        console.warn("channel closed");
+      console.warn("channel closed");
     };
 
     pc.ondatachannel = function(event) {
