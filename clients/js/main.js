@@ -65,7 +65,7 @@ socket.on('message', function(message) {
     let sessionDescription = new RTCSessionDescription(message)
     pc.setRemoteDescription(sessionDescription)
   } else if (message.type === 'candidate' && isStarted) {
-    var candidate = new RTCIceCandidate(JSON.parse(message.candidate));
+    var candidate = new RTCIceCandidate(message.candidate);
     pc.addIceCandidate(candidate);
   } else if (message === 'bye' && isStarted) {
     handleRemoteHangup();
