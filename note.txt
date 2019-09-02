@@ -6,3 +6,6 @@ https://www.gonnavis.com/clients/
 console
   any client
     dataSendChannel.send('hello')
+
+sender ok, receiver error
+  Failed to execute 'setRemoteDescription' on 'RTCPeerConnection': Failed to set remote answer sdp: Called in wrong state: kStable

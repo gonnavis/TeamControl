@@ -61,8 +61,10 @@ socket.on('message', function(message) {
     pc.setRemoteDescription(sessionDescription)
     doAnswer();
   } else if (message.type === 'answer' && isStarted) {
-    let sessionDescription = new RTCSessionDescription(message)
-    pc.setRemoteDescription(sessionDescription)
+    if (isInitiator) {
+      let sessionDescription = new RTCSessionDescription(message)
+      pc.setRemoteDescription(sessionDescription)
+    }
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate(message.candidate);
     pc.addIceCandidate(candidate);
