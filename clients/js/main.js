@@ -1,4 +1,3 @@
-
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
@@ -97,7 +96,9 @@ window.onbeforeunload = function() {
 function createPeerConnection() {
   try {
     pc = new RTCPeerConnection(null);
-    dataSendChannel = pc.createDataChannel('sendDataChannel')
+    dataSendChannel = pc.createDataChannel('sendDataChannel', {
+      reliable: true
+    })
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function(event) {
