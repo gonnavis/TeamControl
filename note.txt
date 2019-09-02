@@ -7,5 +7,8 @@ console
   any client
     dataSendChannel.send('hello')
 
+sender error
+  Failed to construct 'RTCIceCandidate': sdpMid and sdpMLineIndex are both null.
+
 sender ok, receiver error
   Failed to execute 'setRemoteDescription' on 'RTCPeerConnection': Failed to set remote answer sdp: Called in wrong state: kStable

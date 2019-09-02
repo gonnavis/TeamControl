@@ -73,12 +73,12 @@ socket.on('message', function(message) {
       // }
     }
   } else if (message.type === 'candidate' && isStarted) {
-    var candidate = new RTCIceCandidate({
-      sdpMid: message.id, // !!! AND THIS LINE
-      sdpMLineIndex: message.label,
-      candidate: message.candidate
-    });
-    // var candidate = new RTCIceCandidate(message.candidate);
+    // var candidate = new RTCIceCandidate({
+    //   sdpMid: message.id, // !!! AND THIS LINE
+    //   sdpMLineIndex: message.label,
+    //   candidate: message.candidate
+    // });
+    var candidate = new RTCIceCandidate(message.candidate);
     pc.addIceCandidate(candidate);
   } else if (message === 'bye' && isStarted) {
     handleRemoteHangup();
@@ -116,7 +116,7 @@ function createPeerConnection() {
     pc = new RTCPeerConnection({
       "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }]
     });
-    
+
     pc.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function(event) {
@@ -157,16 +157,16 @@ function createPeerConnection() {
 function handleIceCandidate(event) {
   console.log('icecandidate event: ', event);
   if (event.candidate) {
-    sendMessage({
-      type: 'candidate',
-      label: event.candidate.sdpMLineIndex,
-      id: event.candidate.sdpMid,
-      candidate: event.candidate.candidate
-    });
     // sendMessage({
     //   type: 'candidate',
-    //   candidate: event.candidate
+    //   label: event.candidate.sdpMLineIndex,
+    //   id: event.candidate.sdpMid,
+    //   candidate: event.candidate.candidate
     // });
+    sendMessage({
+      type: 'candidate',
+      candidate: event.candidate
+    });
   } else {
     console.log('End of candidates.');
   }
