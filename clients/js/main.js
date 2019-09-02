@@ -123,7 +123,8 @@ function handleIceCandidate(event) {
       type: 'candidate',
       label: event.candidate.sdpMLineIndex,
       id: event.candidate.sdpMid,
-      candidate: event.candidate.candidate
+      // candidate: event.candidate.candidate
+      candidate: event.candidate
     });
   } else {
     console.log('End of candidates.');
