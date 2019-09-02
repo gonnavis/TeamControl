@@ -188,7 +188,7 @@ function doAnswer() {
   console.log('Sending answer to peer.');
   pc.createAnswer({
     offerToReceiveAudio: 0,
-    offerToReceiveVideo: 1
+    offerToReceiveVideo: 0
   }).then(
     setLocalAndSendMessage,
     onCreateSessionDescriptionError
