@@ -4,6 +4,7 @@ var isStarted = false;
 var pc;
 var dataSendChannel
 var dataReceiveChannel
+var is_setRemoteDescription = false
 
 /////////////////////////////////////////////
 
@@ -54,17 +55,23 @@ socket.on('message', function(message) {
   if (message === 'let us connect webrtc') {
     maybeStart();
   } else if (message.type === 'offer') {
-    if (!isInitiator && !isStarted) {
-      maybeStart();
-    }
-    let sessionDescription = new RTCSessionDescription(message)
-    pc.setRemoteDescription(sessionDescription)
-    doAnswer();
-  } else if (message.type === 'answer' && isStarted) {
-    // if (isInitiator) {
+    if (!is_setRemoteDescription) {
+      is_setRemoteDescription = true
+      if (!isInitiator && !isStarted) {
+        maybeStart();
+      }
       let sessionDescription = new RTCSessionDescription(message)
       pc.setRemoteDescription(sessionDescription)
-    // }
+      doAnswer();
+    }
+  } else if (message.type === 'answer' && isStarted) {
+    if (!is_setRemoteDescription) {
+      is_setRemoteDescription = true
+      // if (isInitiator) {
+      let sessionDescription = new RTCSessionDescription(message)
+      pc.setRemoteDescription(sessionDescription)
+      // }
+    }
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate(message.candidate);
     pc.addIceCandidate(candidate);
