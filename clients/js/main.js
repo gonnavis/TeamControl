@@ -100,28 +100,29 @@ function createPeerConnection() {
     ));
 
 
-    // if(isInitiator){}
-    dataSendChannel = pc.createDataChannel('sendDataChannel', {
-      reliable: true
-    })
-    dataSendChannel.onerror = function(error) {
-      console.warn("Error:", error);
-    };
-    dataSendChannel.onmessage = function(event) {
-      console.warn("new message received");
-      console.warn("Got message:", event.data);
-    };
-    dataSendChannel.onopen = function() {
-      console.warn("channel opened");
-    };
-    dataSendChannel.onclose = function() {
-      console.warn("channel closed");
-    };
-
-    pc.ondatachannel = function(event) {
-      dataReceiveChannel = event.channel;
-      dataReceiveChannel.onmessage = function(event) {
-        console.log(event.data)
+    if (isInitiator) {
+      dataSendChannel = pc.createDataChannel('sendDataChannel', {
+        reliable: true
+      })
+      dataSendChannel.onerror = function(error) {
+        console.warn("Error:", error);
+      };
+      dataSendChannel.onmessage = function(event) {
+        console.warn("new message received");
+        console.warn("Got message:", event.data);
+      };
+      dataSendChannel.onopen = function() {
+        console.warn("channel opened");
+      };
+      dataSendChannel.onclose = function() {
+        console.warn("channel closed");
+      };
+    } else {
+      pc.ondatachannel = function(event) {
+        dataReceiveChannel = event.channel;
+        dataReceiveChannel.onmessage = function(event) {
+          console.log(event.data)
+        }
       }
     }
 
