@@ -149,7 +149,7 @@ function handleLogin(success) {
 
     // Setup ice handling 
     yourConn.onicecandidate = function(event) {
-      if (event.candidate && event.candidate.candidate) console.warn('onicecandidate', event.candidate.candidate)
+      // if (event.candidate && event.candidate.candidate) console.warn('onicecandidate', event.candidate.candidate)
       // if (event.candidate && event.candidate.candidate && event.candidate.candidate.indexOf('relay') > -1) {
       send({
         type: "candidate",
@@ -235,7 +235,7 @@ function handleAnswer(answer) {
 
 //when we got an ice candidate from a remote user 
 function handleCandidate(candidate) {
-  console.warn('handleCandidate', candidate)
+  // console.warn('handleCandidate', candidate)
   if (candidate) {
     yourConn.addIceCandidate(new RTCIceCandidate(candidate));
   }
