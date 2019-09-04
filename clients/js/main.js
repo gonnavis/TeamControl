@@ -389,8 +389,8 @@ async function onReceiveChannelStateChange() {
 // display bitrate statistics.
 async function displayStats() {
   console.log('displayStats')
-  if (remoteConnection && remoteConnection.iceConnectionState === 'connected') {
-    const stats = await remoteConnection.getStats();
+  if (yourConn && yourConn.iceConnectionState === 'connected') {
+    const stats = await yourConn.getStats();
     let activeCandidatePair;
     stats.forEach(report => {
       if (report.type === 'transport') {
