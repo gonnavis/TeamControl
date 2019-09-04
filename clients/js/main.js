@@ -1,185 +1,212 @@
-var isChannelReady = false;
-var isInitiator = false;
-var isStarted = false;
-var pc;
-var dataSendChannel
-var dataReceiveChannel
+//our username 
+var name;
+var connectedUser;
 
-/////////////////////////////////////////////
+//connecting to our signaling server 
+var conn = new WebSocket('ws://localhost:9090');
 
-var room = prompt('Enter room name:');
-
-var socket = io.connect();
-
-if (room !== '') {
-  socket.emit('create or join', room);
-  console.log('Attempted to create or  join room', room);
-}
-
-socket.on('created', function(room) {
-  console.log('Created room ' + room);
-  isInitiator = true;
-});
-
-socket.on('full', function(room) {
-  console.log('Room ' + room + ' is full');
-});
-
-socket.on('join', function(room) {
-  console.log('Another peer made a request to join room ' + room);
-  console.log('This peer is the initiator of room ' + room + '!');
-  isChannelReady = true;
-});
-
-socket.on('joined', function(room) {
-  console.log('joined: ' + room);
-  isChannelReady = true;
-  sendMessage('let us connect webrtc')
-});
-
-socket.on('log', function(array) {
-  console.log.apply(console, array);
-});
-
-////////////////////////////////////////////////
-
-function sendMessage(message) {
-  console.log('Client sending message: ', message);
-  socket.emit('message', message);
-}
-
-// This client receives a message
-socket.on('message', function(message) {
-  console.log('Client received message:', message);
-  if (message === 'let us connect webrtc') {
-    maybeStart();
-  } else if (message.type === 'offer') {
-    if (!isInitiator && !isStarted) {
-      maybeStart();
-    }
-    let sessionDescription = new RTCSessionDescription(message)
-    pc.setRemoteDescription(sessionDescription)
-    doAnswer();
-  } else if (message.type === 'answer' && isStarted) {
-    let sessionDescription = new RTCSessionDescription(message)
-    pc.setRemoteDescription(sessionDescription)
-  } else if (message.type === 'candidate' && isStarted) {
-    var candidate = new RTCIceCandidate({
-      sdpMid: message.id, // !!! AND THIS LINE
-      sdpMLineIndex: message.label,
-      candidate: message.candidate
-    });
-    pc.addIceCandidate(candidate);
-  } else if (message === 'bye' && isStarted) {
-    handleRemoteHangup();
-  }
-});
-
-////////////////////////////////////////////////////
-
-
-function maybeStart() {
-  console.log('>>>>>>> maybeStart() ', isStarted, isChannelReady);
-  if (!isStarted && isChannelReady) {
-    console.log('>>>>>> creating peer connection');
-    createPeerConnection();
-    isStarted = true;
-    console.log('isInitiator', isInitiator);
-    if (isInitiator) {
-      doCall();
-    }
-  }
-}
-
-window.onbeforeunload = function() {
-  sendMessage('bye');
+conn.onopen = function() {
+  console.log("Connected to the signaling server");
 };
 
-/////////////////////////////////////////////////////////
+//when we got a message from a signaling server 
+conn.onmessage = function(msg) {
+  console.log("Got message", msg.data);
+  var data = JSON.parse(msg.data);
 
-function createPeerConnection() { 
-  try {
-    pc = new RTCPeerConnection(JSON.parse(
-      '{"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}],"iceTransportPolicy":"all","iceCandidatePoolSize":"0"}'
-    ));
-    // pc = new RTCPeerConnection(null);
-    dataSendChannel = pc.createDataChannel('sendDataChannel')
-    pc.ondatachannel = function(event) {
+  switch (data.type) {
+    case "login":
+      handleLogin(data.success);
+      break;
+      //when somebody wants to call us 
+    case "offer":
+      handleOffer(data.offer, data.name);
+      break;
+    case "answer":
+      handleAnswer(data.answer);
+      break;
+      //when a remote peer sends an ice candidate to us 
+    case "candidate":
+      handleCandidate(data.candidate);
+      break;
+    case "leave":
+      handleLeave();
+      break;
+    default:
+      break;
+  }
+};
+
+conn.onerror = function(err) {
+  console.log("Got error", err);
+};
+
+//alias for sending JSON encoded messages 
+function send(message) {
+
+  //attach the other peer username to our messages
+  if (connectedUser) {
+    message.name = connectedUser;
+  }
+
+  conn.send(JSON.stringify(message));
+};
+
+//****** 
+//UI selectors block 
+//****** 
+
+var loginPage = document.querySelector('#loginPage');
+var usernameInput = document.querySelector('#usernameInput');
+var loginBtn = document.querySelector('#loginBtn');
+
+var callPage = document.querySelector('#callPage');
+var callToUsernameInput = document.querySelector('#callToUsernameInput');
+var callBtn = document.querySelector('#callBtn');
+
+var hangUpBtn = document.querySelector('#hangUpBtn');
+var msgInput = document.querySelector('#msgInput');
+var sendMsgBtn = document.querySelector('#sendMsgBtn');
+
+var chatArea = document.querySelector('#chatarea');
+var yourConn;
+var dataChannel;
+var dataReceiveChannel;
+callPage.style.display = "none";
+
+// Login when the user clicks the button 
+loginBtn.addEventListener("click", function(event) {
+  name = usernameInput.value;
+
+  if (name.length > 0) {
+    send({
+      type: "login",
+      name: name
+    });
+  }
+
+});
+
+function handleLogin(success) {
+
+  if (success === false) {
+    alert("Ooops...try a different username");
+  } else {
+    loginPage.style.display = "none";
+    callPage.style.display = "block";
+
+    //********************** 
+    //Starting a peer connection 
+    //********************** 
+
+    //using Google public stun server 
+    var configuration = {
+      "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }]
+    };
+
+    // yourConn = new webkitRTCPeerConnection(configuration, {optional: [{RtpDataChannels: true}]}); 
+    yourConn = new RTCPeerConnection(configuration);
+
+    // Setup ice handling 
+    yourConn.onicecandidate = function(event) {
+      if (event.candidate) {
+        send({
+          type: "candidate",
+          candidate: event.candidate
+        });
+      }
+    };
+
+    yourConn.ondatachannel = function(event) {
       dataReceiveChannel = event.channel;
       dataReceiveChannel.onmessage = function(event) {
-        console.log(event.data)
+        chatArea.innerHTML += connectedUser + ": " + event.data + "<br />";
       }
     }
-    pc.onicecandidate = handleIceCandidate;
-    console.log('Created RTCPeerConnnection');
-  } catch (e) {
-    console.log('Failed to create PeerConnection, exception: ' + e.message);
-    console.log('Cannot create RTCPeerConnection object.');
-    return;
-  }
-}
 
-function handleIceCandidate(event) {
-  console.log('icecandidate event: ', event);
-  if (event.candidate) {
-    sendMessage({
-      type: 'candidate',
-      label: event.candidate.sdpMLineIndex,
-      id: event.candidate.sdpMid,
-      candidate: event.candidate.candidate
+    //creating data channel 
+    dataChannel = yourConn.createDataChannel("channel1", { reliable: true });
+
+    dataChannel.onerror = function(error) {
+      console.log("Ooops...error:", error);
+    };
+
+    dataChannel.onclose = function() {
+      console.log("data channel is closed");
+    };
+
+  }
+};
+
+//initiating a call 
+callBtn.addEventListener("click", function() {
+  var callToUsername = callToUsernameInput.value;
+
+  if (callToUsername.length > 0) {
+    connectedUser = callToUsername;
+    // create an offer 
+    yourConn.createOffer(function(offer) {
+      send({
+        type: "offer",
+        offer: offer
+      });
+      yourConn.setLocalDescription(offer);
+    }, function(error) {
+      alert("Error when creating an offer");
     });
-  } else {
-    console.log('End of candidates.');
   }
-}
 
-function handleCreateOfferError(event) {
-  console.log('createOffer() error: ', event);
-}
+});
 
-function doCall() {
-  console.log('Sending offer to peer');
-  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError, {
-    offerToReceiveAudio: 0,
-    offerToReceiveVideo: 0
+//when somebody sends us an offer 
+function handleOffer(offer, name) {
+  connectedUser = name;
+  yourConn.setRemoteDescription(new RTCSessionDescription(offer));
+
+  //create an answer to an offer 
+  yourConn.createAnswer(function(answer) {
+    yourConn.setLocalDescription(answer);
+    send({
+      type: "answer",
+      answer: answer
+    });
+  }, function(error) {
+    alert("Error when creating an answer");
   });
-}
 
-function doAnswer() {
-  console.log('Sending answer to peer.');
-  pc.createAnswer({
-    offerToReceiveAudio: 0,
-    offerToReceiveVideo: 1
-  }).then(
-    setLocalAndSendMessage,
-    onCreateSessionDescriptionError
-  );
-}
+};
 
-function setLocalAndSendMessage(sessionDescription) {
-  pc.setLocalDescription(sessionDescription)
-  console.log('setLocalAndSendMessage sending message', sessionDescription);
-  sendMessage(sessionDescription);
-}
+//when we got an answer from a remote user 
+function handleAnswer(answer) {
+  yourConn.setRemoteDescription(new RTCSessionDescription(answer));
+};
 
-function onCreateSessionDescriptionError(error) {
-  trace('Failed to create session description: ' + error.toString());
-}
+//when we got an ice candidate from a remote user 
+function handleCandidate(candidate) {
+  yourConn.addIceCandidate(new RTCIceCandidate(candidate));
+};
 
-function hangup() {
-  console.log('Hanging up.');
-  stop();
-  sendMessage('bye');
-}
+//hang up 
+hangUpBtn.addEventListener("click", function() {
+  send({
+    type: "leave"
+  });
 
-function handleRemoteHangup() {
-  console.log('Session terminated.');
-  stop();
-  isInitiator = false;
-}
+  handleLeave();
+});
 
-function stop() {
-  isStarted = false;
-  pc.close();
-  pc = null;
-}
+function handleLeave() {
+  connectedUser = null;
+  yourConn.close();
+  yourConn.onicecandidate = null;
+};
+
+//when user clicks the "send message" button 
+sendMsgBtn.addEventListener("click", function(event) {
+  var val = msgInput.value;
+  chatArea.innerHTML += name + ": " + val + "<br />";
+
+  //sending a message to a connected peer 
+  dataChannel.send(val);
+  msgInput.value = "";
+});
