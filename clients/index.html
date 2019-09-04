@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <title>WebRTC Text Demo</title>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./css/main.css" />
 </head>
 
 <style>
@@ -20,7 +21,7 @@
 
   <div class="row">
     <div class="col-md-4 col-md-offset-4">
-      <h2>WebRTC Text Demo. Please sign in</h2>
+      <h2>WebRTC Text & File Demo. Please sign in</h2>
       <label for="usernameInput" class="sr-only">Login</label>
       <input type="email" id="usernameInput" class="form-control formgroup" placeholder="Login" required="" autofocus="">
       <button id="loginBtn" class="btn btn-lg btn-primary btnblock">
@@ -32,10 +33,10 @@
 
 <div id="callPage" class="call-page container">
 
-  <div class="row">
+  <div class="row form-group">
     <div class="col-md-4 col-md-offset-4 text-center">
       <div class="panel panel-primary">
-        <div class="panel-heading">Text chat</div>
+        <div class="panel-heading">Text chat & File send</div>
         <div id="chatarea" class="panel-body text-left"></div>
       </div>
     </div>
@@ -49,12 +50,37 @@
     </div>
   </div>
 
-  <div class="row text-center">
+  <div class="row text-center form-group">
     <div class="col-md-12">
       <input id="msgInput" type="text" placeholder="message" />
-      <button id="sendMsgBtn" class="btn-success btn">Send</button>
+      <button id="sendMsgBtn" class="btn-success btn">Send Text</button>
     </div>
   </div>
+
+  <section>
+    <div >
+      <form id="fileInfo">
+        <input type="file" id="fileInput" name="files"/>
+      </form>
+      <button disabled id="sendFile">Send</button>
+      <button disabled id="abortButton">Abort</button>
+    </div>
+
+    <div class="progress">
+      <div class="label">Send progress: </div>
+      <progress id="sendProgress" max="0" value="0"></progress>
+    </div>
+
+    <div class="progress">
+      <div class="label">Receive progress: </div>
+      <progress id="receiveProgress" max="0" value="0"></progress>
+    </div>
+
+    <div id="bitrate"></div>
+    <a id="download"></a>
+    <span id="status"></span>
+
+  </section>
 
 </div>
 

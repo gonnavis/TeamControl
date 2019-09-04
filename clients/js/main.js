@@ -1,10 +1,65 @@
+'use strict';
+
 //our username 
-var name;
-var connectedUser;
+let name;
+let connectedUser;
+
+let config_file_size = 5642623
+let config_file_name = 'webrtc_filetransfer_test.mp4'
+
+//****** 
+//UI selectors block 
+//****** 
+
+let loginPage = document.querySelector('#loginPage');
+let usernameInput = document.querySelector('#usernameInput');
+let loginBtn = document.querySelector('#loginBtn');
+
+let callPage = document.querySelector('#callPage');
+let callToUsernameInput = document.querySelector('#callToUsernameInput');
+let callBtn = document.querySelector('#callBtn');
+
+let hangUpBtn = document.querySelector('#hangUpBtn');
+let msgInput = document.querySelector('#msgInput');
+let sendMsgBtn = document.querySelector('#sendMsgBtn');
+
+let chatArea = document.querySelector('#chatarea');
+let yourConn;
+let sendChannel;
+let receiveChannel;
+callPage.style.display = "none";
+
+const bitrateDiv = document.querySelector('div#bitrate');
+const fileInput = document.querySelector('input#fileInput');
+const abortButton = document.querySelector('button#abortButton');
+const downloadAnchor = document.querySelector('a#download');
+const sendProgress = document.querySelector('progress#sendProgress');
+const receiveProgress = document.querySelector('progress#receiveProgress');
+const statusMessage = document.querySelector('span#status');
+const sendFileButton = document.querySelector('button#sendFile');
+
+let fileReader;
+let receiveBuffer = [];
+let receivedSize = 0;
+
+let bytesPrev = 0;
+let timestampPrev = 0;
+let timestampStart;
+let statsInterval = null;
+let bitrateMax = 0;
+
+let is_sender = false;
+
+
+receiveProgress.max = config_file_size;
 
 //connecting to our signaling server 
-var conn = new WebSocket(`ws://${location.hostname}:9091`);
-// var conn = new WebSocket(`ws://www.gonnavis.com:9091`);
+let conn
+if (location.hostname.indexOf('localhost') > -1 || location.hostname.indexOf('172.') > -1 || location.hostname.indexOf('192.') > -1) {
+  conn = new WebSocket(`ws://www.gonnavis.com:9091`);
+} else {
+  conn = new WebSocket(`ws://${location.hostname}:9091`);
+}
 
 conn.onopen = function() {
   console.log("Connected to the signaling server");
@@ -13,7 +68,7 @@ conn.onopen = function() {
 //when we got a message from a signaling server 
 conn.onmessage = function(msg) {
   console.log("Got message", msg.data);
-  var data = JSON.parse(msg.data);
+  let data = JSON.parse(msg.data);
 
   switch (data.type) {
     case "login":
@@ -53,28 +108,6 @@ function send(message) {
   conn.send(JSON.stringify(message));
 };
 
-//****** 
-//UI selectors block 
-//****** 
-
-var loginPage = document.querySelector('#loginPage');
-var usernameInput = document.querySelector('#usernameInput');
-var loginBtn = document.querySelector('#loginBtn');
-
-var callPage = document.querySelector('#callPage');
-var callToUsernameInput = document.querySelector('#callToUsernameInput');
-var callBtn = document.querySelector('#callBtn');
-
-var hangUpBtn = document.querySelector('#hangUpBtn');
-var msgInput = document.querySelector('#msgInput');
-var sendMsgBtn = document.querySelector('#sendMsgBtn');
-
-var chatArea = document.querySelector('#chatarea');
-var yourConn;
-var dataChannel;
-var dataReceiveChannel;
-callPage.style.display = "none";
-
 // Login when the user clicks the button 
 loginBtn.addEventListener("click", function(event) {
   name = usernameInput.value;
@@ -88,6 +121,9 @@ loginBtn.addEventListener("click", function(event) {
 
 });
 
+fileInput.addEventListener('change', handleFileInputChange, false);
+sendFileButton.addEventListener('click', () => sendData());
+
 function handleLogin(success) {
 
   if (success === false) {
@@ -100,7 +136,7 @@ function handleLogin(success) {
     //Starting a peer connection 
     //********************** 
 
-    configuration = { "iceServers": [{ "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" }], "iceTransportPolicy": "all", "iceCandidatePoolSize": "0" }
+    let configuration = { "iceServers": [{ "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" }], "iceTransportPolicy": "all", "iceCandidatePoolSize": "0" }
 
     yourConn = new RTCPeerConnection(configuration);
 
@@ -116,20 +152,31 @@ function handleLogin(success) {
     };
 
     yourConn.ondatachannel = function(event) {
-      dataReceiveChannel = event.channel;
-      dataReceiveChannel.onmessage = function(event) {
-        chatArea.innerHTML += connectedUser + ": " + event.data + "<br />";
+      receiveChannel = event.channel;
+      receiveChannel.binaryType = 'arraybuffer';
+      receiveChannel.onmessage = onReceiveMessageCallback;
+      // receiveChannel.onopen = onReceiveChannelStateChange;
+      // receiveChannel.onclose = onReceiveChannelStateChange;
+
+      receivedSize = 0;
+      bitrateMax = 0;
+      downloadAnchor.textContent = '';
+      downloadAnchor.removeAttribute('download');
+      if (downloadAnchor.href) {
+        URL.revokeObjectURL(downloadAnchor.href);
+        downloadAnchor.removeAttribute('href');
       }
     }
 
     //creating data channel 
-    dataChannel = yourConn.createDataChannel("channel1", { reliable: true });
+    sendChannel = yourConn.createDataChannel("channel1", { reliable: true });
+    sendChannel.binaryType = 'arraybuffer';
 
-    dataChannel.onerror = function(error) {
+    sendChannel.onerror = function(error) {
       console.log("Ooops...error:", error);
     };
 
-    dataChannel.onclose = function() {
+    sendChannel.onclose = function() {
       console.log("data channel is closed");
     };
 
@@ -138,7 +185,7 @@ function handleLogin(success) {
 
 //initiating a call 
 callBtn.addEventListener("click", function() {
-  var callToUsername = callToUsernameInput.value;
+  let callToUsername = callToUsernameInput.value;
 
   if (callToUsername.length > 0) {
     connectedUser = callToUsername;
@@ -201,10 +248,118 @@ function handleLeave() {
 
 //when user clicks the "send message" button 
 sendMsgBtn.addEventListener("click", function(event) {
-  var val = msgInput.value;
+  let val = msgInput.value;
   chatArea.innerHTML += name + ": " + val + "<br />";
 
   //sending a message to a connected peer 
-  dataChannel.send(val);
+  sendChannel.send(val);
   msgInput.value = "";
 });
+
+function sendData() {
+  console.log('sendData')
+  is_sender = true
+  abortButton.disabled = false;
+  sendFileButton.disabled = true;
+
+  fileInput.disabled = true;
+
+  const file = fileInput.files[0];
+  console.log(`File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`);
+
+  // Handle 0 size files.
+  statusMessage.textContent = '';
+  downloadAnchor.textContent = '';
+  if (file.size === 0) {
+    bitrateDiv.innerHTML = '';
+    statusMessage.textContent = 'File is empty, please select a non-empty file';
+    closeDataChannels();
+    return;
+  }
+  sendProgress.max = config_file_size;
+  const chunkSize = 16384;
+  fileReader = new FileReader();
+  let offset = 0;
+  fileReader.addEventListener('error', error => console.error('Error reading file:', error));
+  fileReader.addEventListener('abort', event => {
+    console.log('File reading aborted:', event)
+  });
+  fileReader.addEventListener('load', e => {
+    console.log('FileRead.onload ', e);
+    sendChannel.send(e.target.result);
+    offset += e.target.result.byteLength;
+    sendProgress.value = offset;
+    if (offset < config_file_size) {
+      readSlice(offset);
+    }
+  });
+  const readSlice = o => {
+    // console.log('readSlice ', o);
+    const slice = file.slice(offset, o + chunkSize);
+    fileReader.readAsArrayBuffer(slice);
+  };
+  readSlice(0);
+}
+
+function onReceiveMessageCallback(event) {
+  console.log('onReceiveMessageCallback')
+  // console.log(`Received Message ${event.data.byteLength}`);
+  receiveBuffer.push(event.data);
+  receivedSize += event.data.byteLength;
+
+  receiveProgress.value = receivedSize;
+
+  // we are assuming that our signaling protocol told
+  // about the expected file size (and name, hash, etc).
+  const file = fileInput.files[0];
+  if (receivedSize === config_file_size) {
+    const received = new Blob(receiveBuffer);
+    receiveBuffer = [];
+
+    downloadAnchor.href = URL.createObjectURL(received);
+    downloadAnchor.download = config_file_name;
+    downloadAnchor.textContent =
+      `Click to download '${config_file_name}' (${config_file_size} bytes)`;
+    downloadAnchor.style.display = 'block';
+
+    const bitrate = Math.round(receivedSize * 8 /
+      ((new Date()).getTime() - timestampStart));
+    bitrateDiv.innerHTML = `<strong>Average Bitrate:</strong> ${bitrate} kbits/sec (max: ${bitrateMax} kbits/sec)`;
+
+    if (statsInterval) {
+      clearInterval(statsInterval);
+      statsInterval = null;
+    }
+
+    closeDataChannels();
+  }
+}
+
+function closeDataChannels() {
+  console.log('closeDataChannels')
+  // console.log('Closing data channels');
+  sendChannel.close();
+  // console.log(`Closed data channel with label: ${sendChannel.label}`);
+  if (receiveChannel) {
+    receiveChannel.close();
+    // console.log(`Closed data channel with label: ${receiveChannel.label}`);
+  }
+  localConnection.close();
+  localConnection = null;
+  // console.log('Closed peer connections');
+
+  // re-enable the file select
+  fileInput.disabled = false;
+  abortButton.disabled = true;
+  sendFileButton.disabled = false;
+}
+
+function handleFileInputChange() {
+  console.log('handleFileInputChange')
+  let file = fileInput.files[0];
+  if (!file) {
+    // console.log('No file chosen');
+  } else {
+    sendFileButton.disabled = false;
+  }
+}

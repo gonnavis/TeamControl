@@ -2,25 +2,5 @@
 ref
   http://www.tutorialspoint.com/webrtc/webrtc_text_demo.htm#
 
-http://www.gonnavis.com/TeamControl/clients/
-
-// https://www.gonnavis.com/clients/
-
-console
-  any client
-    dataSendChannel.send('hello')
-
-arkr-down aw pc
-  main.js:9 Connected to the signaling server
-  main.js:14 Got message "Hello world"
-  main.js:14 Got message {"type":"login","success":true}
-  main.js:14 Got message {"type":"answer","answer":{"type":"answer","sdp":"v=0\r\no=- 2905924818666234466 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\na=msid-semantic: WMS\r\nm=application 9 DTLS/SCTP 5000\r\nc=IN IP4 0.0.0.0\r\nb=AS:30\r\na=ice-ufrag:n7O3\r\na=ice-pwd:OCqhdJ/kgQIQO0WRxyJ/7djn\r\na=ice-options:trickle\r\na=fingerprint:sha-256 EF:0B:24:4A:AC:56:5D:CC:C7:68:C5:E6:3F:42:38:28:AD:9A:77:C4:F7:19:05:FA:DD:CD:14:92:12:3C:04:B7\r\na=setup:active\r\na=mid:0\r\na=sctpmap:5000 webrtc-datachannel 1024\r\n"}}
-  main.js:14 Got message {"type":"candidate","candidate":{"candidate":"candidate:1940350144 1 udp 2113937151 714783d2-15b2-4f7e-8173-2bc846d0d9eb.local 49510 typ host generation 0 ufrag n7O3 network-cost 999","sdpMid":"0","sdpMLineIndex":0}}
-
-leo_guest mac pc
-  main.js:9 Connected to the signaling server
-  main.js:14 Got message "Hello world"
-  main.js:14 Got message {"type":"login","success":true}
-  main.js:14 Got message {"type":"offer","offer":{"type":"offer","sdp":"v=0\r\no=- 4876794581118238451 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\na=msid-semantic: WMS\r\nm=application 9 DTLS/SCTP 5000\r\nc=IN IP4 0.0.0.0\r\na=ice-ufrag:qXO3\r\na=ice-pwd:iwTwX9HILuq3wqB7CZxDgPIV\r\na=ice-options:trickle\r\na=fingerprint:sha-256 28:A5:4E:E8:C8:A9:E6:11:F2:C7:FE:04:FF:72:AE:BD:5C:4B:DA:A6:F1:26:CA:B6:BC:1C:29:9B:86:72:93:4A\r\na=setup:actpass\r\na=mid:0\r\na=sctpmap:5000 webrtc-datachannel 1024\r\n"},"name":"a"}
-  main.js:14 Got message {"type":"candidate","candidate":{"candidate":"candidate:2588195999 1 udp 2113937151 172.30.78.140 53693 typ host generation 0 ufrag qXO3 network-cost 999","sdpMid":"0","sdpMLineIndex":0}}
+http://www.gonnavis.com/TeamControl_filetransfer_2/clients/
 

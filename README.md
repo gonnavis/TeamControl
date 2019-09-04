@@ -5,7 +5,7 @@
 
 ## 客户端
 
-用 Chrome 浏览器访问 http://www.gonnavis.com/TeamControl/clients/.
+用 Chrome 浏览器访问 http://www.gonnavis.com/TeamControl_filetransfer_2/clients/ .
 
 随意输入一个用户名, 点击 Sign in.
 
