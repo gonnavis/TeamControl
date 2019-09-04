@@ -162,8 +162,8 @@ function handleLogin(success) {
       receiveChannel = event.channel;
       receiveChannel.binaryType = 'arraybuffer';
       receiveChannel.onmessage = onReceiveMessageCallback;
-      // receiveChannel.onopen = onReceiveChannelStateChange;
-      // receiveChannel.onclose = onReceiveChannelStateChange;
+      receiveChannel.onopen = onReceiveChannelStateChange;
+      receiveChannel.onclose = onReceiveChannelStateChange;
 
       receivedSize = 0;
       bitrateMax = 0;
@@ -371,5 +371,46 @@ function handleFileInputChange() {
     // console.log('No file chosen');
   } else {
     sendFileButton.disabled = false;
+  }
+}
+
+async function onReceiveChannelStateChange() {
+  console.log('onReceiveChannelStateChange')
+  const readyState = receiveChannel.readyState;
+  // console.log(`Receive channel state is: ${readyState}`);
+  if (readyState === 'open') {
+    timestampStart = (new Date()).getTime();
+    timestampPrev = timestampStart;
+    statsInterval = setInterval(displayStats, 500);
+    await displayStats();
+  }
+}
+
+// display bitrate statistics.
+async function displayStats() {
+  console.log('displayStats')
+  if (remoteConnection && remoteConnection.iceConnectionState === 'connected') {
+    const stats = await remoteConnection.getStats();
+    let activeCandidatePair;
+    stats.forEach(report => {
+      if (report.type === 'transport') {
+        activeCandidatePair = stats.get(report.selectedCandidatePairId);
+      }
+    });
+    if (activeCandidatePair) {
+      if (timestampPrev === activeCandidatePair.timestamp) {
+        return;
+      }
+      // calculate current bitrate
+      const bytesNow = activeCandidatePair.bytesReceived;
+      const bitrate = Math.round((bytesNow - bytesPrev) * 8 /
+        (activeCandidatePair.timestamp - timestampPrev));
+      bitrateDiv.innerHTML = `<strong>Current Bitrate:</strong> ${bitrate} kbits/sec`;
+      timestampPrev = activeCandidatePair.timestamp;
+      bytesPrev = bytesNow;
+      if (bitrate > bitrateMax) {
+        bitrateMax = bitrate;
+      }
+    }
   }
 }
