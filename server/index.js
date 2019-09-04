@@ -1,8 +1,8 @@
 //require our websocket library 
 var WebSocketServer = require('ws').Server;
 
-//creating a websocket server at port 9090 
-var wss = new WebSocketServer({ port: 9090 });
+//creating a websocket server at port 9091 
+var wss = new WebSocketServer({ port: 9091 });
 
 //all connected to the server users 
 var users = {};
@@ -150,4 +150,4 @@ function sendTo(connection, message) {
   connection.send(JSON.stringify(message));
 }
 
-console.log('server running on port: 9090')
+console.log('server running on port: 9091')
