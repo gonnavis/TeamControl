@@ -1,61 +1,153 @@
-'use strict';
+//require our websocket library 
+var WebSocketServer = require('ws').Server;
 
-var nodeStatic = require('node-static');
-var https = require('https')
-var fs=require('fs')
-var socketIO = require('socket.io');
-var options = {
-  key: fs.readFileSync('2279791_gonnavis.com.key'),
-  cert: fs.readFileSync('2279791_gonnavis.com.pem'),
-}
-var fileServer = new(nodeStatic.Server)();
-var app = https.createServer(options,function(req, res) {
-  fileServer.serve(req, res);
-}).listen(443);
+//creating a websocket server at port 9090 
+var wss = new WebSocketServer({ port: 9090 });
 
-console.log('listening on port: 443')
+//all connected to the server users 
+var users = {};
 
-var io = socketIO.listen(app);
-io.sockets.on('connection', function(socket) {
+//when a user connects to our sever 
+wss.on('connection', function(connection) {
 
-  // convenience function to log server messages on the client
-  function log() {
-    var array = ['Message from server:'];
-    array.push.apply(array, arguments);
-    socket.emit('log', array);
-  }
+  console.log("User connected");
 
-  socket.on('message', function(message) {
-    log('Client said: ', message);
-    // for a real app, would be room-only (not broadcast)
-    socket.broadcast.emit('message', message);
-  });
+  //when server gets a message from a connected user 
+  connection.on('message', function(message) {
 
-  socket.on('create or join', function(room) {
-    log('Received request to create or join room ' + room);
+    var data;
+    //accepting only JSON messages 
+    try {
+      data = JSON.parse(message);
+    } catch (e) {
+      console.log("Invalid JSON");
+      data = {};
+    }
 
-    var clientsInRoom = io.sockets.adapter.rooms[room];
-    var numClients = clientsInRoom ? Object.keys(clientsInRoom.sockets).length : 0;
-    log('Room ' + room + ' now has ' + numClients + ' client(s)');
+    //switching type of the user message 
+    switch (data.type) {
+      //when a user tries to login 
+      case "login":
+        console.log("User logged", data.name);
+        //if anyone is logged in with this username then refuse 
+        if (users[data.name]) {
+          sendTo(connection, {
+            type: "login",
+            success: false
+          });
+        } else {
+          //save user connection on the server 
+          users[data.name] = connection;
+          connection.name = data.name;
 
-    if (numClients === 0) {
-      socket.join(room);
-      log('Client ID ' + socket.id + ' created room ' + room);
-      socket.emit('created', room, socket.id);
+          sendTo(connection, {
+            type: "login",
+            success: true
+          });
+        }
 
-    } else if (numClients === 1) {
-      log('Client ID ' + socket.id + ' joined room ' + room);
-      io.sockets.in(room).emit('join', room);
-      socket.join(room);
-      socket.emit('joined', room, socket.id);
-      io.sockets.in(room).emit('ready');
-    } else { // max two clients
-      socket.emit('full', room);
+        break;
+
+      case "offer":
+        //for ex. UserA wants to call UserB 
+        console.log("Sending offer to: ", data.name);
+
+        //if UserB exists then send him offer details 
+        var conn = users[data.name];
+
+        if (conn != null) {
+          //setting that UserA connected with UserB 
+          connection.otherName = data.name;
+
+          sendTo(conn, {
+            type: "offer",
+            offer: data.offer,
+            name: connection.name
+          });
+        }
+
+        break;
+
+      case "answer":
+        console.log("Sending answer to: ", data.name);
+        //for ex. UserB answers UserA 
+        var conn = users[data.name];
+
+        if (conn != null) {
+          connection.otherName = data.name;
+          sendTo(conn, {
+            type: "answer",
+            answer: data.answer
+          });
+        }
+
+        break;
+
+      case "candidate":
+        console.log("Sending candidate to:", data.name);
+        var conn = users[data.name];
+
+        if (conn != null) {
+          sendTo(conn, {
+            type: "candidate",
+            candidate: data.candidate
+          });
+        }
+
+        break;
+
+      case "leave":
+        console.log("Disconnecting from", data.name);
+        var conn = users[data.name];
+        conn.otherName = null;
+
+        //notify the other user so he can disconnect his peer connection 
+        if (conn != null) {
+          sendTo(conn, {
+            type: "leave"
+          });
+        }
+
+        break;
+
+      default:
+        sendTo(connection, {
+          type: "error",
+          message: "Command not found: " + data.type
+        });
+
+        break;
+
     }
   });
 
-  socket.on('bye', function(){
-    console.log('received bye');
+  //when user exits, for example closes a browser window 
+  //this may help if we are still in "offer","answer" or "candidate" state 
+  connection.on("close", function() {
+
+    if (connection.name) {
+      delete users[connection.name];
+
+      if (connection.otherName) {
+        console.log("Disconnecting from ", connection.otherName);
+        var conn = users[connection.otherName];
+        conn.otherName = null;
+
+        if (conn != null) {
+          sendTo(conn, {
+            type: "leave"
+          });
+        }
+      }
+    }
   });
 
+  connection.send("Hello world");
+
 });
+
+function sendTo(connection, message) {
+  connection.send(JSON.stringify(message));
+}
+
+console.log('server running on port: 9090')
