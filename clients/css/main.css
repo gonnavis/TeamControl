@@ -281,7 +281,7 @@ ul {
 div.progress div.label {
   display: inline-block;
   font-weight: 400;
-  width: 8.2em;
+  width: 10em;
 }
 
 form {
@@ -290,5 +290,5 @@ form {
 }
 
 progress {
-  width: calc(100% - 8.5em);
+  width: calc(100% - 10.5em);
 }
