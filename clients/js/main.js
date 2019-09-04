@@ -107,11 +107,13 @@ function handleLogin(success) {
         //   "url": "stun:stun.l.google.com:19302",
         // },
         {
-            url: 'turn:numb.viagenie.ca',
-            credential: 'gonnavis@gmail.com',
-            username: 'WebRTC'
+          urls: ['turn:numb.viagenie.ca'],
+          credential: 'gonnavis@gmail.com',
+          username: 'WebRTC'
         },
       ],
+      "iceTransportPolicy": "all",
+      "iceCandidatePoolSize": "0"
       // "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }],
     };
 
@@ -121,7 +123,7 @@ function handleLogin(success) {
     // Setup ice handling 
     yourConn.onicecandidate = function(event) {
       console.warn('onicecandidate', event.candidate.candidate)
-      if (event.candidate && event.candidate.candidate.indexOf('relay')>-1) {
+      if (event.candidate && event.candidate.candidate && event.candidate.candidate.indexOf('relay') > -1) {
         send({
           type: "candidate",
           candidate: event.candidate
