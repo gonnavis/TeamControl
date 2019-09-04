@@ -228,6 +228,7 @@ function handleAnswer(answer) {
 
 //when we got an ice candidate from a remote user 
 function handleCandidate(candidate) {
+  console.warn('handleCandidate', candidate)
   yourConn.addIceCandidate(new RTCIceCandidate(candidate));
 };
 
