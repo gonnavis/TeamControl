@@ -120,7 +120,7 @@ loginBtn.addEventListener("click", function(event) {
   }
 
 });
-
+ 
 fileInput.addEventListener('change', handleFileInputChange, false);
 sendFileButton.addEventListener('click', () => sendData());
 
