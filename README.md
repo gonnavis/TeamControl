@@ -1,34 +1,21 @@
 # TeamControl
 
-Visual Desktop Remote Control Application based on WebRTC
+基于 WebRTC 的远程聊天
 
 
-## On the computer to be controlled
+## 客户端
 
-```
+用 Chrome 浏览器访问 http://www.gonnavis.com/TeamControl/clients/.
 
-npm install
+随意输入一个用户名, 点击 Sign in.
 
-node controllee/
+在 username to call 中输入对方的用户名, 点击 Call.
 
-```
-Will auto open http://localhost:7890/controllee/ in your default browser.
+在 message 中输入想发送的内容, 点击 Send.
 
-Then prompt you to type a room name, enter an arbitrary name you prefer.
+## 如果想自己部署服务器
 
-And prompt you to choose what screen part to share, choose the "your whole screen" and click "share" button.
-
-## On the computer to controll
-
-Open browser (recommend Chrome) and access https://www.gonnavis.com/controller/ .
-
-Then enter the room name you named before.
-
-OK, you can remote controll the mouse position!
-
-
-
-## If you want run the server yourself, on the server
+在服务器上运行
 
 ```
 

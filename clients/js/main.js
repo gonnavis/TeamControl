@@ -100,26 +100,8 @@ function handleLogin(success) {
     //Starting a peer connection 
     //********************** 
 
-    //using Google public stun server 
-    // var configuration = {
-    //   "iceServers": [
-    //     // { 
-    //     //   "url": "stun:stun.l.google.com:19302",
-    //     // },
-    //     {
-    //       urls: ['turn:numb.viagenie.ca'],
-    //       credential: 'gonnavis@gmail.com',
-    //       username: 'WebRTC'
-    //     },
-    //   ],
-    //   "iceTransportPolicy": "all",
-    //   "iceCandidatePoolSize": "0"
-    //   // "iceServers": [{ "url": "stun:stun2.1.google.com:19302" }],
-    // };
-
     configuration = { "iceServers": [{ "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" }], "iceTransportPolicy": "all", "iceCandidatePoolSize": "0" }
 
-    // yourConn = new webkitRTCPeerConnection(configuration, {optional: [{RtpDataChannels: true}]}); 
     yourConn = new RTCPeerConnection(configuration);
 
     // Setup ice handling 
