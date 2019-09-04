@@ -3,8 +3,11 @@ var name;
 var connectedUser;
 
 //connecting to our signaling server 
-var conn = new WebSocket(`ws://${location.hostname}:9090`);
-// var conn = new WebSocket(`ws://www.gonnavis.com:9090`);
+if (location.hostname.indexOf('localhost') > -1 || location.hostname.indexOf('172.') > -1 || location.hostname.indexOf('192.') > -1) {
+  var conn = new WebSocket(`ws://www.gonnavis.com:9090`);
+} else {
+  var conn = new WebSocket(`ws://${location.hostname}:9090`);
+}
 
 conn.onopen = function() {
   console.log("Connected to the signaling server");
