@@ -179,6 +179,10 @@ function handleLogin(success) {
     sendChannel = yourConn.createDataChannel("channel1", { reliable: true });
     sendChannel.binaryType = 'arraybuffer';
 
+    sendChannel.onopen = function(error) {
+      dom_file_wrap.style.display = 'block'
+    };
+
     sendChannel.onerror = function(error) {
       console.log("Ooops...error:", error);
     };
@@ -334,7 +338,7 @@ function onReceiveMessageCallback(event) {
 
     const bitrate = Math.round(receivedSize * 8 /
       ((new Date()).getTime() - timestampStart));
-    bitrateDiv.innerHTML = `<strong>Average Bitrate:</strong> ${bitrate} kbits/sec (max: ${bitrateMax} kbits/sec)`;
+    bitrateDiv.innerHTML = `<strong>Average Bitrate:</strong> ${Math.round(bitrate)} KB/sec (max: ${Math.round(bitrateMax)} KB/sec)`;
 
     if (statsInterval) {
       clearInterval(statsInterval);
@@ -405,7 +409,7 @@ async function displayStats() {
       const bytesNow = activeCandidatePair.bytesReceived;
       const bitrate = Math.round((bytesNow - bytesPrev) * 8 /
         (activeCandidatePair.timestamp - timestampPrev));
-      bitrateDiv.innerHTML = `<strong>Current Bitrate:</strong> ${bitrate} kbits/sec`;
+      bitrateDiv.innerHTML = `<strong>Current Bitrate:</strong> ${Math.round(bitrate)} KB/sec`;
       timestampPrev = activeCandidatePair.timestamp;
       bytesPrev = bytesNow;
       if (bitrate > bitrateMax) {
