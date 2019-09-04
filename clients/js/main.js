@@ -246,15 +246,15 @@ function handleLeave() {
   yourConn.onicecandidate = null;
 };
 
-//when user clicks the "send message" button 
-sendMsgBtn.addEventListener("click", function(event) {
-  let val = msgInput.value;
-  chatArea.innerHTML += name + ": " + val + "<br />";
+// //when user clicks the "send message" button 
+// sendMsgBtn.addEventListener("click", function(event) {
+//   let val = msgInput.value;
+//   chatArea.innerHTML += name + ": " + val + "<br />";
 
-  //sending a message to a connected peer 
-  sendChannel.send(val);
-  msgInput.value = "";
-});
+//   //sending a message to a connected peer 
+//   sendChannel.send(val);
+//   msgInput.value = "";
+// });
 
 function sendData() {
   console.log('sendData')

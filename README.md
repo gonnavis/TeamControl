@@ -9,9 +9,9 @@
 
 随意输入一个用户名, 点击 Sign in.
 
-在 username to call 中输入对方的用户名, 点击 Call.
+发送方选择文件后, 点击 Send, 等待 Send progress 进度条完成.
 
-在 message 中输入想发送的内容, 点击 Send.
+接收方等待 Receive progress 进度条完成后, 点击链接存储文件.
 
 ## 如果想自己部署服务器
 
