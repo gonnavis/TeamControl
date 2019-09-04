@@ -354,8 +354,8 @@ function closeDataChannels() {
     receiveChannel.close();
     // console.log(`Closed data channel with label: ${receiveChannel.label}`);
   }
-  localConnection.close();
-  localConnection = null;
+  yourConn.close();
+  yourConn = null;
   // console.log('Closed peer connections');
 
   // re-enable the file select
