@@ -120,7 +120,7 @@ loginBtn.addEventListener("click", function(event) {
   }
 
 });
- 
+
 fileInput.addEventListener('change', handleFileInputChange, false);
 sendFileButton.addEventListener('click', () => sendData());
 
@@ -144,10 +144,10 @@ function handleLogin(success) {
     yourConn.onicecandidate = function(event) {
       if (event.candidate && event.candidate.candidate) console.warn('onicecandidate', event.candidate.candidate)
       // if (event.candidate && event.candidate.candidate && event.candidate.candidate.indexOf('relay') > -1) {
-        send({
-          type: "candidate",
-          candidate: event.candidate
-        });
+      send({
+        type: "candidate",
+        candidate: event.candidate
+      });
       // }
     };
 
@@ -229,7 +229,9 @@ function handleAnswer(answer) {
 //when we got an ice candidate from a remote user 
 function handleCandidate(candidate) {
   console.warn('handleCandidate', candidate)
-  yourConn.addIceCandidate(new RTCIceCandidate(candidate));
+  if (candidate.candidate) {
+    yourConn.addIceCandidate(new RTCIceCandidate(candidate));
+  }
 };
 
 //hang up 
