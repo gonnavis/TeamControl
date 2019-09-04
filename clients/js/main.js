@@ -120,7 +120,7 @@ function handleLogin(success) {
 
     // Setup ice handling 
     yourConn.onicecandidate = function(event) {
-      if (event.candidate) {
+      if (event.candidate && event.candidate.type==='relay') {
         send({
           type: "candidate",
           candidate: event.candidate
