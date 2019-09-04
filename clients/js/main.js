@@ -338,7 +338,7 @@ function onReceiveMessageCallback(event) {
 
     const bitrate = Math.round(receivedSize * 8 /
       ((new Date()).getTime() - timestampStart));
-    bitrateDiv.innerHTML = `<strong>Average Bitrate:</strong> ${Math.round(bitrate)} KB/sec (max: ${Math.round(bitrateMax)} KB/sec)`;
+    bitrateDiv.innerHTML = `<strong>Average Bitrate:</strong> ${Math.round(bitrate/8)} KB/sec (max: ${Math.round(bitrateMax/8)} KB/sec)`;
 
     if (statsInterval) {
       clearInterval(statsInterval);
@@ -409,7 +409,7 @@ async function displayStats() {
       const bytesNow = activeCandidatePair.bytesReceived;
       const bitrate = Math.round((bytesNow - bytesPrev) * 8 /
         (activeCandidatePair.timestamp - timestampPrev));
-      bitrateDiv.innerHTML = `<strong>Current Bitrate:</strong> ${Math.round(bitrate)} KB/sec`;
+      bitrateDiv.innerHTML = `<strong>Current Bitrate:</strong> ${Math.round(bitrate/8)} KB/sec`;
       timestampPrev = activeCandidatePair.timestamp;
       bytesPrev = bytesNow;
       if (bitrate > bitrateMax) {
