@@ -136,7 +136,14 @@ function handleLogin(success) {
     //Starting a peer connection 
     //********************** 
 
-    let configuration = { "iceServers": [{ "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" }], "iceTransportPolicy": "all", "iceCandidatePoolSize": "0" }
+    let configuration = {
+      "iceServers": [
+        { "urls": ["stun:stun.l.google.com:19302"] },
+        { "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" },
+      ],
+      "iceTransportPolicy": "all",
+      "iceCandidatePoolSize": "0"
+    }
 
     yourConn = new RTCPeerConnection(configuration);
 
