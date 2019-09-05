@@ -308,7 +308,7 @@ function sendData() {
     console.log('File reading aborted:', event)
   });
   fileReader.addEventListener('load', e => {
-    console.log('FileRead.onload ', e);
+    // console.log('FileRead.onload ', e);
     sendChannel.send(e.target.result);
     offset += e.target.result.byteLength;
     sendProgress.value = offset;
@@ -364,7 +364,7 @@ function onReceiveMessageCallback(event) {
       statsInterval = null;
     }
 
-    closeDataChannels();
+    // closeDataChannels();
   }
 }
 
