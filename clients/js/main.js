@@ -10,7 +10,7 @@ let is_first_data = true
 
 let offset = 0;
 const chunkSize = 16384;
-fileReader = new FileReader();
+let fileReader = new FileReader();
 
 //****** 
 //UI selectors block 
