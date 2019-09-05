@@ -11,6 +11,7 @@ let is_first_data = true
 let offset = 0;
 const chunkSize = 16384;
 let fileReader = new FileReader();
+let file
 
 //****** 
 //UI selectors block 
@@ -282,7 +283,7 @@ function sendData() {
 
   fileInput.disabled = true;
 
-  const file = fileInput.files[0];
+  file = fileInput.files[0];
   file_name = file.name
   file_size = file.size
   console.log(`File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`);
