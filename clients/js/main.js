@@ -4,8 +4,9 @@
 let name;
 let connectedUser;
 
-let config_file_size = 5642623
-let config_file_name = 'webrtc_filetransfer_test.mp4'
+let file_size
+let file_name
+let is_first_data = true
 
 //****** 
 //UI selectors block 
@@ -51,7 +52,6 @@ let bitrateMax = 0;
 let is_sender = false;
 
 
-receiveProgress.max = config_file_size;
 
 //connecting to our signaling server 
 let conn
@@ -272,6 +272,7 @@ function handleLeave() {
 
 function sendData() {
   console.log('sendData')
+
   is_sender = true
   abortButton.disabled = false;
   sendFileButton.disabled = true;
@@ -279,7 +280,15 @@ function sendData() {
   fileInput.disabled = true;
 
   const file = fileInput.files[0];
+  file_name = file.name
+  file_size = file.size
   console.log(`File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`);
+
+  if (is_first_data) {
+    let obj = { file_name, file_size }
+    sendChannel.send(JSON.stringify(obj));
+    is_first_data = false
+  }
 
   // Handle 0 size files.
   statusMessage.textContent = '';
@@ -290,7 +299,7 @@ function sendData() {
     closeDataChannels();
     return;
   }
-  sendProgress.max = config_file_size;
+  sendProgress.max = file_size;
   const chunkSize = 16384;
   fileReader = new FileReader();
   let offset = 0;
@@ -303,7 +312,7 @@ function sendData() {
     sendChannel.send(e.target.result);
     offset += e.target.result.byteLength;
     sendProgress.value = offset;
-    if (offset < config_file_size) {
+    if (offset < file_size) {
       readSlice(offset);
     }
   });
@@ -316,7 +325,17 @@ function sendData() {
 }
 
 function onReceiveMessageCallback(event) {
-  console.log('onReceiveMessageCallback')
+  console.log('onReceiveMessageCallback', event)
+
+  if (is_first_data) {
+    let obj = JSON.parse(event.data)
+    file_name = obj.file_name
+    file_size = obj.file_size
+    receiveProgress.max = file_size;
+    is_first_data = false
+    return
+  }
+
   // console.log(`Received Message ${event.data.byteLength}`);
   receiveBuffer.push(event.data);
   receivedSize += event.data.byteLength;
@@ -326,14 +345,14 @@ function onReceiveMessageCallback(event) {
   // we are assuming that our signaling protocol told
   // about the expected file size (and name, hash, etc).
   const file = fileInput.files[0];
-  if (receivedSize === config_file_size) {
+  if (receivedSize === file_size) {
     const received = new Blob(receiveBuffer);
     receiveBuffer = [];
 
     downloadAnchor.href = URL.createObjectURL(received);
-    downloadAnchor.download = config_file_name;
+    downloadAnchor.download = file_name;
     downloadAnchor.textContent =
-      `Click to download '${config_file_name}' (${config_file_size} bytes)`;
+      `Click to download '${file_name}' (${file_size} bytes)`;
     downloadAnchor.style.display = 'block';
 
     const bitrate = Math.round(receivedSize * 8 /
