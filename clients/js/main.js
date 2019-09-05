@@ -8,6 +8,10 @@ let file_size
 let file_name
 let is_first_data = true
 
+let offset = 0;
+const chunkSize = 16384;
+fileReader = new FileReader();
+
 //****** 
 //UI selectors block 
 //****** 
@@ -300,9 +304,6 @@ function sendData() {
     return;
   }
   sendProgress.max = file_size;
-  const chunkSize = 16384;
-  fileReader = new FileReader();
-  let offset = 0;
   fileReader.addEventListener('error', error => console.error('Error reading file:', error));
   fileReader.addEventListener('abort', event => {
     console.log('File reading aborted:', event)
@@ -313,16 +314,17 @@ function sendData() {
     offset += e.target.result.byteLength;
     sendProgress.value = offset;
     if (offset < file_size) {
-      readSlice(offset);
+      // readSlice(offset);
+      console.warn('sended one')
     }
   });
-  const readSlice = o => {
-    // console.log('readSlice ', o);
-    const slice = file.slice(offset, o + chunkSize);
-    fileReader.readAsArrayBuffer(slice);
-  };
   readSlice(0);
 }
+function readSlice(){
+  // console.log('readSlice ', o);
+  const slice = file.slice(offset, offset + chunkSize);
+  fileReader.readAsArrayBuffer(slice);
+};
 
 function onReceiveMessageCallback(event) {
   console.log('onReceiveMessageCallback', event)
