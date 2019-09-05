@@ -43,7 +43,6 @@ const receiveProgress = document.querySelector('progress#receiveProgress');
 const statusMessage = document.querySelector('span#status');
 const sendFileButton = document.querySelector('button#sendFile');
 
-let fileReader;
 let receiveBuffer = [];
 let receivedSize = 0;
 
