@@ -17,10 +17,6 @@ let file
 //UI selectors block 
 //****** 
 
-let loginPage = document.querySelector('#loginPage');
-let usernameInput = document.querySelector('#usernameInput');
-let loginBtn = document.querySelector('#loginBtn');
-
 let callPage = document.querySelector('#callPage');
 let callToUsernameInput = document.querySelector('#callToUsernameInput');
 let callBtn = document.querySelector('#callBtn');
@@ -112,21 +108,23 @@ function send(message) {
   conn.send(JSON.stringify(message));
 };
 
-// Login when the user clicks the button 
-loginBtn.addEventListener("click", function(event) {
-  name = usernameInput.value;
 
-  if (name.length > 0) {
-    send({
-      type: "login",
-      name: name
-    });
-  }
-
-});
 
 fileInput.addEventListener('change', handleFileInputChange, false);
 sendFileButton.addEventListener('click', () => sendData());
+
+//************************************************************************************************************************
+
+name = uuidv4()
+
+if (name.length > 0) {
+  send({
+    type: "login",
+    name: name
+  });
+}
+
+//************************************************************************************************************************
 
 function handleLogin(success) {
 
