@@ -9,7 +9,7 @@ let file_name
 let is_first_data = true
 
 let offset = 0;
-const chunkSize = 16384;
+const chunkSize = 1 * 1000 * 1000;
 let fileReader = new FileReader();
 let file
 
@@ -311,18 +311,16 @@ function sendData() {
   fileReader.addEventListener('load', e => {
     // console.log('FileRead.onload ', e);
     sendChannel.send(e.target.result);
+    console.warn('sended one')
     offset += e.target.result.byteLength;
     sendProgress.value = offset;
     if (offset < file_size) {
-      // readSlice(offset);
-      console.warn('sended one')
-      readSlice(0);
+      readSlice();
     }
   });
-  readSlice(0);
+  readSlice();
 }
 function readSlice(){
-  // console.log('readSlice ', o);
   const slice = file.slice(offset, offset + chunkSize);
   fileReader.readAsArrayBuffer(slice);
 };
