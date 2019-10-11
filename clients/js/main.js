@@ -319,6 +319,7 @@ function sendData() {
       readSlice(0);
     }
   });
+  readSlice(0);
 }
 function readSlice(){
   // console.log('readSlice ', o);
