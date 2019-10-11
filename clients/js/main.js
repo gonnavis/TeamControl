@@ -309,6 +309,7 @@ function sendData() {
     console.log('File reading aborted:', event)
   });
   fileReader.addEventListener('load', e => {
+    debugger
     // console.log('FileRead.onload ', e);
     sendChannel.send(e.target.result);
     offset += e.target.result.byteLength;
@@ -321,6 +322,7 @@ function sendData() {
   readSlice(0);
 }
 function readSlice(){
+  debugger
   // console.log('readSlice ', o);
   const slice = file.slice(offset, offset + chunkSize);
   fileReader.readAsArrayBuffer(slice);
