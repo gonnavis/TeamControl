@@ -55,14 +55,26 @@ let is_sender = false;
 
 //connecting to our signaling server 
 let conn
-if (location.hostname.indexOf('localhost') > -1 || location.hostname.indexOf('172.') > -1 || location.hostname.indexOf('192.') > -1) {
+if (config.env === 'formalsite') {
   conn = new WebSocket(`ws://www.gonnavis.com:9091`);
-} else {
+} else if (config.env === 'testsite') {
+  conn = new WebSocket(`ws://www.gonnavis.com:9092`);
+} else if (config.env === 'localsite') {
   conn = new WebSocket(`ws://${location.hostname}:9091`);
 }
 
 conn.onopen = function() {
   console.log("Connected to the signaling server");
+
+  name = uuidv4()
+  input_uuid.value = name
+
+  if (name.length > 0) {
+    send({
+      type: "login",
+      name: name
+    });
+  }
 };
 
 //when we got a message from a signaling server 
@@ -115,23 +127,11 @@ sendFileButton.addEventListener('click', () => sendData());
 
 //************************************************************************************************************************
 
-name = uuidv4()
-
-if (name.length > 0) {
-  send({
-    type: "login",
-    name: name
-  });
-}
-
-//************************************************************************************************************************
-
 function handleLogin(success) {
 
   if (success === false) {
     alert("Ooops...try a different username");
   } else {
-    loginPage.style.display = "none";
     callPage.style.display = "block";
 
     //********************** 
@@ -318,7 +318,8 @@ function sendData() {
   });
   readSlice();
 }
-function readSlice(){
+
+function readSlice() {
   const slice = file.slice(offset, offset + chunkSize);
   fileReader.readAsArrayBuffer(slice);
 };

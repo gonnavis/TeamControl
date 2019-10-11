@@ -1,8 +1,16 @@
+const config = require('../config.js')
+console.log(config)
 //require our websocket library 
 var WebSocketServer = require('ws').Server;
+var port
+if (config.env === 'testsite') {
+  port = 9092
+} else {
+  port = 9091
+}
 
-//creating a websocket server at port 9091 
-var wss = new WebSocketServer({ port: 9091 });
+//creating a websocket server at port  
+var wss = new WebSocketServer({ port });
 
 //all connected to the server users 
 var users = {};
@@ -131,7 +139,7 @@ wss.on('connection', function(connection) {
       if (connection.otherName) {
         console.log("Disconnecting from ", connection.otherName);
         var conn = users[connection.otherName];
-        if(conn) conn.otherName = null;
+        if (conn) conn.otherName = null;
 
         if (conn != null) {
           sendTo(conn, {
@@ -150,4 +158,4 @@ function sendTo(connection, message) {
   connection.send(JSON.stringify(message));
 }
 
-console.log('server running on port: 9091')
+console.log('server running on port: ' + port)
