@@ -9,7 +9,7 @@ let file_name
 let is_first_data = true
 
 let offset = 0;
-const chunkSize = 1 * 1000 * 1000;
+const chunkSize = 10000; // max 65536
 let fileReader = new FileReader();
 let file
 
