@@ -1,36 +1,24 @@
 'use strict';
-
-//our username 
 let name;
 let connectedUser;
-
 let file_size
 let file_name
 let is_first_data = true
-
 let offset = 0;
 const chunkSize = 10000; // max 65536
 let fileReader = new FileReader();
 let file
-
-//****** 
-//UI selectors block 
-//****** 
-
 let callPage = document.querySelector('#callPage');
 let callToUsernameInput = document.querySelector('#callToUsernameInput');
 let callBtn = document.querySelector('#callBtn');
-
 let hangUpBtn = document.querySelector('#hangUpBtn');
 let msgInput = document.querySelector('#msgInput');
 let sendMsgBtn = document.querySelector('#sendMsgBtn');
-
 let chatArea = document.querySelector('#chatarea');
 let yourConn;
 let sendChannel;
 let receiveChannel;
 callPage.style.display = "none";
-
 const bitrateDiv = document.querySelector('div#bitrate');
 const fileInput = document.querySelector('input#fileInput');
 const abortButton = document.querySelector('button#abortButton');
@@ -39,20 +27,14 @@ const sendProgress = document.querySelector('progress#sendProgress');
 const receiveProgress = document.querySelector('progress#receiveProgress');
 const statusMessage = document.querySelector('span#status');
 const sendFileButton = document.querySelector('button#sendFile');
-
 let receiveBuffer = [];
 let receivedSize = 0;
-
 let bytesPrev = 0;
 let timestampPrev = 0;
 let timestampStart;
 let statsInterval = null;
 let bitrateMax = 0;
-
 let is_sender = false;
-
-
-
 //connecting to our signaling server 
 let conn
 if (config.env === 'formalsite') {
@@ -62,215 +44,29 @@ if (config.env === 'formalsite') {
 } else if (config.env === 'localsite') {
   conn = new WebSocket(`ws://${location.hostname}:9091`);
 }
-
-conn.onopen = function() {
-  console.log("Connected to the signaling server");
-
-  name = uuidv4()
-  input_uuid.value = name
-
-  if (name.length > 0) {
-    send({
-      type: "login",
-      name: name
-    });
-  }
-};
-
+conn.onopen = function() { all('conn_onopen') };
 //when we got a message from a signaling server 
-conn.onmessage = function(msg) {
-  console.log("Got message", msg.data);
-  let data = JSON.parse(msg.data);
-
-  switch (data.type) {
-    case "login":
-      handleLogin(data.success);
-      break;
-      //when somebody wants to call us 
-    case "offer":
-      handleOffer(data.offer, data.name);
-      break;
-    case "answer":
-      handleAnswer(data.answer);
-      break;
-      //when a remote peer sends an ice candidate to us 
-    case "candidate":
-      handleCandidate(data.candidate);
-      break;
-    case "leave":
-      handleLeave();
-      break;
-    default:
-      break;
-  }
-};
-
-conn.onerror = function(err) {
-  console.log("Got error", err);
-};
-
-//alias for sending JSON encoded messages 
-function send(message) {
-
-  //attach the other peer username to our messages
-  if (connectedUser) {
-    message.name = connectedUser;
-  }
-
-  conn.send(JSON.stringify(message));
-};
-
-
-
-fileInput.addEventListener('change', handleFileInputChange, false);
-sendFileButton.addEventListener('click', () => sendData());
-
-//************************************************************************************************************************
-
-function handleLogin(success) {
-
-  if (success === false) {
-    alert("Ooops...try a different username");
-  } else {
-    callPage.style.display = "block";
-
-    //********************** 
-    //Starting a peer connection 
-    //********************** 
-
-    let configuration = {
-      "iceServers": [
-        { "urls": ["stun:stun.l.google.com:19302"] },
-        { "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" },
-      ],
-      "iceTransportPolicy": "all",
-      "iceCandidatePoolSize": "0"
-    }
-
-    yourConn = new RTCPeerConnection(configuration);
-
-    // Setup ice handling 
-    yourConn.onicecandidate = function(event) {
-      // if (event.candidate && event.candidate.candidate) console.warn('onicecandidate', event.candidate.candidate)
-      // if (event.candidate && event.candidate.candidate && event.candidate.candidate.indexOf('relay') > -1) {
-      send({
-        type: "candidate",
-        candidate: event.candidate
-      });
-      // }
-    };
-
-    yourConn.ondatachannel = function(event) {
-      receiveChannel = event.channel;
-      receiveChannel.binaryType = 'arraybuffer';
-      receiveChannel.onmessage = onReceiveMessageCallback;
-      receiveChannel.onopen = onReceiveChannelStateChange;
-      receiveChannel.onclose = onReceiveChannelStateChange;
-
-      receivedSize = 0;
-      bitrateMax = 0;
-      downloadAnchor.textContent = '';
-      downloadAnchor.removeAttribute('download');
-      if (downloadAnchor.href) {
-        URL.revokeObjectURL(downloadAnchor.href);
-        downloadAnchor.removeAttribute('href');
-      }
-    }
-
-    //creating data channel 
-    sendChannel = yourConn.createDataChannel("channel1", { reliable: true });
-    sendChannel.binaryType = 'arraybuffer';
-
-    sendChannel.onopen = function(error) {
-      dom_file_wrap.style.display = 'block'
-    };
-
-    sendChannel.onerror = function(error) {
-      console.log("Ooops...error:", error);
-    };
-
-    sendChannel.onclose = function() {
-      console.log("data channel is closed");
-    };
-
-  }
-};
-
+conn.onmessage = function(msg) { all('conn_onmessage', msg) };
+conn.onerror = function(err) { console.log("Got error", err); };
+fileInput.addEventListener('change', function() { all('fileInput_onchange') }, false);
+sendFileButton.addEventListener('click', function() { all('sendFileButton_onclick') });
+hangUpBtn.addEventListener("click", function() { all('hangUpBtn_onclick') });
 //initiating a call 
-callBtn.addEventListener("click", function() {
-  let callToUsername = callToUsernameInput.value;
-
-  if (callToUsername.length > 0) {
-    connectedUser = callToUsername;
-    // create an offer 
-    yourConn.createOffer(function(offer) {
-      send({
-        type: "offer",
-        offer: offer
-      });
-      yourConn.setLocalDescription(offer);
-    }, function(error) {
-      alert("Error when creating an offer");
-    });
-  }
-
-});
-
-//when somebody sends us an offer 
-function handleOffer(offer, name) {
-  connectedUser = name;
-  yourConn.setRemoteDescription(new RTCSessionDescription(offer));
-
-  //create an answer to an offer 
-  yourConn.createAnswer(function(answer) {
-    yourConn.setLocalDescription(answer);
-    send({
-      type: "answer",
-      answer: answer
-    });
-  }, function(error) {
-    alert("Error when creating an answer");
-  });
-
-};
-
-//when we got an answer from a remote user 
-function handleAnswer(answer) {
-  yourConn.setRemoteDescription(new RTCSessionDescription(answer));
-};
-
-//when we got an ice candidate from a remote user 
-function handleCandidate(candidate) {
-  // console.warn('handleCandidate', candidate)
-  if (candidate) {
-    yourConn.addIceCandidate(new RTCIceCandidate(candidate));
-  }
-};
-
-//hang up 
-hangUpBtn.addEventListener("click", function() {
-  send({
-    type: "leave"
-  });
-
-  handleLeave();
-});
+callBtn.addEventListener("click", function() { all('callBtn_onclick') });
 
 function handleLeave() {
   connectedUser = null;
   yourConn.close();
   yourConn.onicecandidate = null;
 };
-
-// //when user clicks the "send message" button 
-// sendMsgBtn.addEventListener("click", function(event) {
-//   let val = msgInput.value;
-//   chatArea.innerHTML += name + ": " + val + "<br />";
-
-//   //sending a message to a connected peer 
-//   sendChannel.send(val);
-//   msgInput.value = "";
-// });
+//alias for sending JSON encoded messages 
+function send(message) {
+  //attach the other peer username to our messages
+  if (connectedUser) {
+    message.name = connectedUser;
+  }
+  conn.send(JSON.stringify(message));
+};
 
 function sendData() {
   console.log('sendData')
@@ -326,7 +122,6 @@ function readSlice() {
 
 function onReceiveMessageCallback(event) {
   console.log('onReceiveMessageCallback', event)
-
   if (is_first_data) {
     let obj = JSON.parse(event.data)
     file_name = obj.file_name
@@ -386,17 +181,6 @@ function closeDataChannels() {
   abortButton.disabled = true;
   sendFileButton.disabled = false;
 }
-
-function handleFileInputChange() {
-  console.log('handleFileInputChange')
-  let file = fileInput.files[0];
-  if (!file) {
-    // console.log('No file chosen');
-  } else {
-    sendFileButton.disabled = false;
-  }
-}
-
 async function onReceiveChannelStateChange() {
   console.log('onReceiveChannelStateChange')
   const readyState = receiveChannel.readyState;
@@ -408,7 +192,6 @@ async function onReceiveChannelStateChange() {
     await displayStats();
   }
 }
-
 // display bitrate statistics.
 async function displayStats() {
   console.log('displayStats')
@@ -436,4 +219,151 @@ async function displayStats() {
       }
     }
   }
+}
+async function all(etype, arg) {
+  if (etype === 'conn_onopen') {
+    console.log("Connected to the signaling server");
+    name = uuidv4()
+    input_uuid.value = name
+
+    if (name.length > 0) {
+      send({
+        type: "login",
+        name: name
+      });
+    }
+  } else if (etype === 'conn_onmessage') {
+    let msg = arg
+    console.log("Got message", msg.data);
+    let data = JSON.parse(msg.data);
+
+    if (data.type === 'login') {
+      let success = data.success
+      if (success === false) {
+        alert("Ooops...try a different username");
+      } else {
+        callPage.style.display = "block";
+
+        //********************** 
+        //Starting a peer connection 
+        //********************** 
+
+        let configuration = {
+          "iceServers": [
+            { "urls": ["stun:stun.l.google.com:19302"] },
+            { "urls": ["turn:numb.viagenie.ca  "], "username": "gonnavis@gmail.com", "credential": "WebRTC" },
+          ],
+          "iceTransportPolicy": "all",
+          "iceCandidatePoolSize": "0"
+        }
+
+        yourConn = new RTCPeerConnection(configuration);
+
+        // Setup ice handling 
+        yourConn.onicecandidate = function(event) {
+          // if (event.candidate && event.candidate.candidate) console.warn('onicecandidate', event.candidate.candidate)
+          // if (event.candidate && event.candidate.candidate && event.candidate.candidate.indexOf('relay') > -1) {
+          send({
+            type: "candidate",
+            candidate: event.candidate
+          });
+          // }
+        };
+
+        yourConn.ondatachannel = function(event) {
+          receiveChannel = event.channel;
+          receiveChannel.binaryType = 'arraybuffer';
+          receiveChannel.onmessage = onReceiveMessageCallback;
+          receiveChannel.onopen = onReceiveChannelStateChange;
+          receiveChannel.onclose = onReceiveChannelStateChange;
+
+          receivedSize = 0;
+          bitrateMax = 0;
+          downloadAnchor.textContent = '';
+          downloadAnchor.removeAttribute('download');
+          if (downloadAnchor.href) {
+            URL.revokeObjectURL(downloadAnchor.href);
+            downloadAnchor.removeAttribute('href');
+          }
+        }
+
+        //creating data channel 
+        sendChannel = yourConn.createDataChannel("channel1", { reliable: true });
+        sendChannel.binaryType = 'arraybuffer';
+
+        sendChannel.onopen = function(error) {
+          dom_file_wrap.style.display = 'block'
+        };
+
+        sendChannel.onerror = function(error) {
+          console.log("Ooops...error:", error);
+        };
+
+        sendChannel.onclose = function() {
+          console.log("data channel is closed");
+        };
+
+      }
+    } else if (data.type === 'offer') {
+      //when somebody sends us an offer 
+      let offer = data.offer
+      let name = data.name
+      connectedUser = name;
+      yourConn.setRemoteDescription(new RTCSessionDescription(offer));
+
+      //create an answer to an offer 
+      yourConn.createAnswer(function(answer) {
+        yourConn.setLocalDescription(answer);
+        send({
+          type: "answer",
+          answer: answer
+        });
+      }, function(error) {
+        alert("Error when creating an answer");
+      });
+    } else if (data.type === 'answer') {
+      //when we got an answer from a remote user 
+      let answer = data.answer
+      yourConn.setRemoteDescription(new RTCSessionDescription(answer));
+    } else if (data.type === 'candidate') {
+      //when we got an ice candidate from a remote user 
+      let candidate = data.candidate
+      // console.warn('handleCandidate', candidate)
+      if (candidate) {
+        yourConn.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+    } else if (data.type === 'leave') {
+      handleLeave()
+    }
+
+  } else if (etype === 'fileInput_onchange') {
+    console.log('handleFileInputChange')
+    let file = fileInput.files[0];
+    if (!file) {
+      // console.log('No file chosen');
+    } else {
+      sendFileButton.disabled = false;
+    }
+  } else if (etype === 'sendFileButton_onclick') {
+    sendData()
+  } else if (etype === 'hangUpBtn_onclick') {
+    send({ type: "leave" });
+    handleLeave();
+  } else if (etype === 'callBtn_onclick') {
+    let callToUsername = callToUsernameInput.value;
+
+    if (callToUsername.length > 0) {
+      connectedUser = callToUsername;
+      // create an offer 
+      yourConn.createOffer(function(offer) {
+        send({
+          type: "offer",
+          offer: offer
+        });
+        yourConn.setLocalDescription(offer);
+      }, function(error) {
+        alert("Error when creating an offer");
+      });
+    }
+  } else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {} else if (etype === '') {}
 }
