@@ -45,6 +45,9 @@
   </div> -->
 
   <section id="dom_file_wrap" style="display:none;">
+    <div id="dom_reset" onclick="reset_to_before_fileInput_onchange()">
+      <button>重置</button>
+    </div>
     <div>
       <form id="fileInfo">
         <input type="file" id="fileInput" name="files" />
@@ -76,7 +79,8 @@
   var vConsole = new VConsole();
   console.log('Hello world');
 </script> -->
-<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<!-- <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script> -->
+<script src="./js/lib/webrtc-adapter-latest.js"></script>
 <script src="./js/lib/uuidv4.js"></script>
 
 <script src="../config.js"></script>

@@ -1,4 +1,5 @@
 'use strict';
+
 let callPage = document.querySelector('#callPage');
 let callToUsernameInput = document.querySelector('#callToUsernameInput');
 let callBtn = document.querySelector('#callBtn');
@@ -14,6 +15,7 @@ const sendProgress = document.querySelector('progress#sendProgress');
 const receiveProgress = document.querySelector('progress#receiveProgress');
 const statusMessage = document.querySelector('span#status');
 const sendFileButton = document.querySelector('button#sendFile');
+
 let name;
 let connectedUser;
 let file_size
@@ -35,7 +37,47 @@ let statsInterval = null;
 let bitrateMax = 0;
 let is_sender = false;
 let wsconn
+
 all()
+
+function reset_to_before_fileInput_onchange() {
+  fileInput.value = null
+  fileInput.disabled = false;
+  sendFileButton.disabled = true;
+  is_sender = false
+  abortButton.disabled = true;
+  sendFileButton.disabled = false;
+  file = null
+  file_name = null
+  file_size = null
+  is_first_data = true
+  statusMessage.textContent = '';
+  downloadAnchor.textContent = '';
+  bitrateDiv.innerHTML = '';
+  sendProgress.max = null;
+  sendProgress.value = null;
+  receiveProgress.max = null;
+  receiveProgress.value = null;
+  offset = 0
+  fileReader = new FileReader()
+  receivedSize = 0;
+  receiveBuffer = [];
+  timestampStart = null
+  timestampPrev = null
+}
+
+async function create_sendChannel() {
+  return new Promise((resolve, reject) => {
+    let new_sendChannel = rtcconn.createDataChannel("channel1", { reliable: true });
+    new_sendChannel.binaryType = 'arraybuffer';
+    new_sendChannel.onopen = function() {
+      resolve(new_sendChannel)
+    }
+    new_sendChannel.onerror = function() {
+      reject('create_sendChannel error')
+    }
+  })
+}
 
 function handleLeave() {
   connectedUser = null;
@@ -53,11 +95,9 @@ function send(message) {
 
 function sendData() {
   console.log('sendData')
-
   is_sender = true
   abortButton.disabled = false;
   sendFileButton.disabled = true;
-
   fileInput.disabled = true;
 
   file = fileInput.files[0];
@@ -72,12 +112,9 @@ function sendData() {
   }
 
   // Handle 0 size files.
-  statusMessage.textContent = '';
-  downloadAnchor.textContent = '';
   if (file.size === 0) {
-    bitrateDiv.innerHTML = '';
     statusMessage.textContent = 'File is empty, please select a non-empty file';
-    closeDataChannels();
+    // closeDataChannels();
     return;
   }
   sendProgress.max = file_size;
@@ -93,6 +130,8 @@ function sendData() {
     sendProgress.value = offset;
     if (offset < file_size) {
       readSlice();
+    } else {
+      // dom_reset.style.display = 'block'
     }
   });
   readSlice();
@@ -205,6 +244,7 @@ async function displayStats() {
 }
 async function all(etype, arg) {
   if (!etype) {
+    // dom_reset.style.display = 'none'
     callPage.style.display = "none";
     let ws_url
     if (config.env === 'formalsite') {
@@ -281,9 +321,8 @@ async function all(etype, arg) {
         rtcconn.onicecandidate = function(event) { all('rtcconn_onicecandidate', event) };
         rtcconn.ondatachannel = function(event) { all('rtcconn_ondatachannel', event) }
         //creating data channel 
-        sendChannel = rtcconn.createDataChannel("channel1", { reliable: true });
-        sendChannel.binaryType = 'arraybuffer';
-        sendChannel.onopen = function() { all('sendChannel_open') }
+        sendChannel = await create_sendChannel()
+        dom_file_wrap.style.display = 'block'
       }
     } else if (data.type === 'offer') {
       //when somebody sends us an offer 
@@ -333,7 +372,5 @@ async function all(etype, arg) {
       URL.revokeObjectURL(downloadAnchor.href);
       downloadAnchor.removeAttribute('href');
     }
-  } else if (etype === 'sendChannel_open') {
-    dom_file_wrap.style.display = 'block'
   }
 }
