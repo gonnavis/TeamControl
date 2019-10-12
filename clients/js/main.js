@@ -68,7 +68,7 @@ function reset_to_before_fileInput_onchange() {
   timestampPrev = null
 }
 
-async function create_sendChannel() {
+async function create_sendChannel_n_call() {
   return new Promise((resolve, reject) => {
     let new_sendChannel = rtcconn.createDataChannel("channel1", { reliable: true });
     new_sendChannel.binaryType = 'arraybuffer';
@@ -349,8 +349,8 @@ async function all(etype, arg) {
         rtcconn.onicecandidate = function(event) { all('rtcconn_onicecandidate', event) };
         rtcconn.ondatachannel = function(event) { all('rtcconn_ondatachannel', event) }
         //creating data channel 
-        console.log('sart create_sendChannel')
-        sendChannel = await create_sendChannel()
+        console.log('sart create_sendChannel_n_call')
+        sendChannel = await create_sendChannel_n_call()
         dom_file_wrap.style.display = 'block'
         console.log('login ok')
       }
