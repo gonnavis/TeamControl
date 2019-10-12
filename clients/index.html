@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <div class="row text-center form-group" style="display: ;">
+  <div class="row text-center form-group" style="display: none;">
     <div class="col-md-12">
       <input id="callToUsernameInput" type="text" placeholder="username to call" />
       <button id="callBtn" class="btn-success btn">Call</button>
@@ -45,9 +45,6 @@
   </div> -->
 
   <section id="dom_file_wrap" style="display:none;">
-    <div id="dom_reset" onclick="reset_to_before_fileInput_onchange()">
-      <button>重置</button>
-    </div>
     <div>
       <form id="fileInfo">
         <input type="file" id="fileInput" name="files" />
@@ -71,6 +68,9 @@
     <span id="status"></span>
 
   </section>
+  <div id="dom_reset" onclick="reset_to_before_fileInput_onchange()" style="display: none;"> 
+    <button>重置</button>
+  </div>
 
 </div>
 
