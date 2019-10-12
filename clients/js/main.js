@@ -17,6 +17,7 @@ const statusMessage = document.querySelector('span#status');
 const sendFileButton = document.querySelector('button#sendFile');
 
 let name;
+let oppo_name = vs.getQueryStringByName('id')
 let connectedUser;
 let file_size
 let file_name
@@ -76,6 +77,7 @@ async function create_sendChannel() {
     new_sendChannel.onerror = function() {
       reject('create_sendChannel error')
     }
+    do_call(oppo_name)
   })
 }
 
@@ -214,6 +216,20 @@ async function onReceiveChannelStateChange() {
     await displayStats();
   }
 }
+async function do_call(name) {
+
+  if (name.length > 0) {
+    connectedUser = name;
+    // create an offer 
+    let offer = await rtcconn.createOffer()
+    send({
+      type: "offer",
+      offer: offer
+    });
+    rtcconn.setLocalDescription(offer);
+  }
+
+}
 // display bitrate statistics.
 async function displayStats() {
   console.log('displayStats')
@@ -244,6 +260,10 @@ async function displayStats() {
 }
 async function all(etype, arg) {
   if (!etype) {
+    if (oppo_name) {
+      dom_uuid_wrap.style.display = 'none'
+      callToUsernameInput.value = oppo_name
+    }
     // dom_reset.style.display = 'none'
     callPage.style.display = "none";
     let ws_url
@@ -278,22 +298,11 @@ async function all(etype, arg) {
     send({ type: "leave" });
     handleLeave();
   } else if (etype === 'callBtn_onclick') {
-    let callToUsername = callToUsernameInput.value;
-
-    if (callToUsername.length > 0) {
-      connectedUser = callToUsername;
-      // create an offer 
-      let offer = await rtcconn.createOffer()
-      send({
-        type: "offer",
-        offer: offer
-      });
-      rtcconn.setLocalDescription(offer);
-    }
+    await do_call(callToUsernameInput.value)
   } else if (etype === 'wsconn_onopen') {
     console.log("Connected to the signaling server");
     name = uuidv4()
-    input_uuid.value = name
+    input_uuid.value = location.href.split('?')[0] + "?id=" + name
     if (name.length > 0) {
       send({ type: "login", name: name });
     }
@@ -321,8 +330,10 @@ async function all(etype, arg) {
         rtcconn.onicecandidate = function(event) { all('rtcconn_onicecandidate', event) };
         rtcconn.ondatachannel = function(event) { all('rtcconn_ondatachannel', event) }
         //creating data channel 
+        console.log('sart create_sendChannel')
         sendChannel = await create_sendChannel()
         dom_file_wrap.style.display = 'block'
+        console.log('login ok')
       }
     } else if (data.type === 'offer') {
       //when somebody sends us an offer 
