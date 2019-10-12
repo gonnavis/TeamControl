@@ -1,20 +1,40 @@
 const config = require('../config.js')
 console.log(config)
 //require our websocket library 
+var qs = require('querystring');
 var WebSocketServer = require('ws').Server;
-var port
+var http = require('http');
+var wsport, httpport
 if (config.env === 'testsite') {
-  port = 9092
+  httpport = 9082
+  wsport = 9092
 } else {
-  port = 9091
+  httpport = 9081
+  wsport = 9091
 }
 
-//creating a websocket server at port  
-var wss = new WebSocketServer({ port });
+http.createServer(function(req, res) {
+  // response.writeHead(200, {'Content-Type': 'text/plain','Access-Control-Allow-Origin':'*'});
+  // var data = qs.parse(req.url.split('?')[1]);
+  // // console.log(data)
 
+  // console.log("User logged", data.name);
+  // //if anyone is logged in with this username then refuse 
+  // if (users[data.name]) {
+  //   res.end({ type: "login", success: false });
+  // } else {
+  //   //save user connection on the server 
+  //   users[data.name] = connection;
+  //   connection.name = data.name;
+
+  //   res.end({ type: "login", success: true }); }
+  res.end('Hello World\n');
+}).listen(httpport);
+
+//creating a websocket server at wsport  
+var wss = new WebSocketServer({ port: wsport });
 //all connected to the server users 
 var users = {};
-
 //when a user connects to our sever 
 wss.on('connection', function(connection) {
 
@@ -141,4 +161,4 @@ function sendTo(connection, message) {
   connection.send(JSON.stringify(message));
 }
 
-console.log('server running on port: ' + port)
+console.log(`server running on port: ${httpport} & ${wsport}`)

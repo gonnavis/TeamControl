@@ -38,6 +38,7 @@ let statsInterval = null;
 let bitrateMax = 0;
 let is_sender = false;
 let wsconn
+let api_url
 
 all()
 
@@ -223,10 +224,7 @@ async function do_call(name) {
     connectedUser = name;
     // create an offer 
     let offer = await rtcconn.createOffer()
-    send({
-      type: "offer",
-      offer: offer
-    });
+    send({ type: "offer", offer: offer });
     rtcconn.setLocalDescription(offer);
   }
 
@@ -264,10 +262,13 @@ async function create_ws() {
     let ws_url
     if (config.env === 'formalsite') {
       ws_url = `ws://www.gonnavis.com:9091`
+      api_url = `http://www.gonnavis.com:9081/`
     } else if (config.env === 'testsite') {
       ws_url = `ws://www.gonnavis.com:9092`
+      api_url = `http://www.gonnavis.com:9082/`
     } else if (config.env === 'localsite') {
       ws_url = `ws://${location.hostname}:9091`
+      api_url = `http://${location.hostname}:9081/`
     }
     let new_wsconn = new WebSocket(ws_url);
     new_wsconn.onopen = function() {
@@ -299,14 +300,11 @@ async function all(etype, arg) {
     // dom_reset.style.display = 'none'
     callPage.style.display = "none";
     wsconn = await create_ws()
+    wsconn.onmessage = function(msg) { all('wsconn_onmessage', msg) };
     name = uuidv4()
     input_uuid.value = location.href.split('?')[0] + "?id=" + name
-    if (name.length > 0) {
-      send({ type: "login", name: name });
-    }
+    send({ type: "login", name: name });
     //when we got a message from a signaling server 
-    wsconn.onmessage = function(msg) { all('wsconn_onmessage', msg) };
-    wsconn.onerror = function(err) { console.log("Got error", err); };
     fileInput.addEventListener('change', function() { all('fileInput_onchange') }, false);
     sendFileButton.addEventListener('click', function() { all('sendFileButton_onclick') });
     hangUpBtn.addEventListener("click", function() { all('hangUpBtn_onclick') });
@@ -384,10 +382,7 @@ async function all(etype, arg) {
 
   } else if (etype === 'rtcconn_onicecandidate') {
     let event = arg
-    send({
-      type: "candidate",
-      candidate: event.candidate
-    });
+    send({ type: "candidate", candidate: event.candidate });
   } else if (etype === 'rtcconn_ondatachannel') {
     let event = arg
     receiveChannel = event.channel;
