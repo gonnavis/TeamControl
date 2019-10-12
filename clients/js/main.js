@@ -169,6 +169,7 @@ function onReceiveMessageCallback(event) {
     receiveBuffer = [];
 
     downloadAnchor.href = URL.createObjectURL(received);
+    // downloadAnchor.target = "_blank"
     downloadAnchor.download = file_name;
     downloadAnchor.textContent =
       `Click to download '${file_name}' (${file_size} bytes)`;
@@ -258,14 +259,8 @@ async function displayStats() {
     }
   }
 }
-async function all(etype, arg) {
-  if (!etype) {
-    if (oppo_name) {
-      dom_uuid_wrap.style.display = 'none'
-      callToUsernameInput.value = oppo_name
-    }
-    // dom_reset.style.display = 'none'
-    callPage.style.display = "none";
+async function create_ws() {
+  return new Promise(resolve => {
     let ws_url
     if (config.env === 'formalsite') {
       ws_url = `ws://www.gonnavis.com:9091`
@@ -274,8 +269,41 @@ async function all(etype, arg) {
     } else if (config.env === 'localsite') {
       ws_url = `ws://${location.hostname}:9091`
     }
-    wsconn = new WebSocket(ws_url);
-    wsconn.onopen = function() { all('wsconn_onopen') };
+    let new_wsconn = new WebSocket(ws_url);
+    new_wsconn.onopen = function() {
+      console.log("Connected to the signaling server");
+      resolve(new_wsconn)
+    };
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function all(etype, arg) {
+  if (!etype) {
+    if (oppo_name) {
+      dom_uuid_wrap.style.display = 'none'
+      callToUsernameInput.value = oppo_name
+    }
+    // dom_reset.style.display = 'none'
+    callPage.style.display = "none";
+    wsconn = await create_ws()
+    name = uuidv4()
+    input_uuid.value = location.href.split('?')[0] + "?id=" + name
+    if (name.length > 0) {
+      send({ type: "login", name: name });
+    }
     //when we got a message from a signaling server 
     wsconn.onmessage = function(msg) { all('wsconn_onmessage', msg) };
     wsconn.onerror = function(err) { console.log("Got error", err); };
@@ -299,13 +327,6 @@ async function all(etype, arg) {
     handleLeave();
   } else if (etype === 'callBtn_onclick') {
     await do_call(callToUsernameInput.value)
-  } else if (etype === 'wsconn_onopen') {
-    console.log("Connected to the signaling server");
-    name = uuidv4()
-    input_uuid.value = location.href.split('?')[0] + "?id=" + name
-    if (name.length > 0) {
-      send({ type: "login", name: name });
-    }
   } else if (etype === 'wsconn_onmessage') {
     let msg = arg
     console.log("Got message", msg.data);
