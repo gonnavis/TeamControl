@@ -1,4 +1,19 @@
 'use strict';
+let callPage = document.querySelector('#callPage');
+let callToUsernameInput = document.querySelector('#callToUsernameInput');
+let callBtn = document.querySelector('#callBtn');
+let hangUpBtn = document.querySelector('#hangUpBtn');
+let msgInput = document.querySelector('#msgInput');
+let sendMsgBtn = document.querySelector('#sendMsgBtn');
+let chatArea = document.querySelector('#chatarea');
+const bitrateDiv = document.querySelector('div#bitrate');
+const fileInput = document.querySelector('input#fileInput');
+const abortButton = document.querySelector('button#abortButton');
+const downloadAnchor = document.querySelector('a#download');
+const sendProgress = document.querySelector('progress#sendProgress');
+const receiveProgress = document.querySelector('progress#receiveProgress');
+const statusMessage = document.querySelector('span#status');
+const sendFileButton = document.querySelector('button#sendFile');
 let name;
 let connectedUser;
 let file_size
@@ -8,25 +23,9 @@ let offset = 0;
 const chunkSize = 10000; // max 65536
 let fileReader = new FileReader();
 let file
-let callPage = document.querySelector('#callPage');
-let callToUsernameInput = document.querySelector('#callToUsernameInput');
-let callBtn = document.querySelector('#callBtn');
-let hangUpBtn = document.querySelector('#hangUpBtn');
-let msgInput = document.querySelector('#msgInput');
-let sendMsgBtn = document.querySelector('#sendMsgBtn');
-let chatArea = document.querySelector('#chatarea');
 let rtcconn;
 let sendChannel;
 let receiveChannel;
-callPage.style.display = "none";
-const bitrateDiv = document.querySelector('div#bitrate');
-const fileInput = document.querySelector('input#fileInput');
-const abortButton = document.querySelector('button#abortButton');
-const downloadAnchor = document.querySelector('a#download');
-const sendProgress = document.querySelector('progress#sendProgress');
-const receiveProgress = document.querySelector('progress#receiveProgress');
-const statusMessage = document.querySelector('span#status');
-const sendFileButton = document.querySelector('button#sendFile');
 let receiveBuffer = [];
 let receivedSize = 0;
 let bytesPrev = 0;
@@ -35,18 +34,8 @@ let timestampStart;
 let statsInterval = null;
 let bitrateMax = 0;
 let is_sender = false;
-//connecting to our signaling server 
 let wsconn
 all()
-wsconn.onopen = function() { all('wsconn_onopen') };
-//when we got a message from a signaling server 
-wsconn.onmessage = function(msg) { all('wsconn_onmessage', msg) };
-wsconn.onerror = function(err) { console.log("Got error", err); };
-fileInput.addEventListener('change', function() { all('fileInput_onchange') }, false);
-sendFileButton.addEventListener('click', function() { all('sendFileButton_onclick') });
-hangUpBtn.addEventListener("click", function() { all('hangUpBtn_onclick') });
-//initiating a call 
-callBtn.addEventListener("click", function() { all('callBtn_onclick') });
 
 function handleLeave() {
   connectedUser = null;
@@ -216,13 +205,25 @@ async function displayStats() {
 }
 async function all(etype, arg) {
   if (!etype) {
+    callPage.style.display = "none";
+    let ws_url
     if (config.env === 'formalsite') {
-      wsconn = new WebSocket(`ws://www.gonnavis.com:9091`);
+      ws_url = `ws://www.gonnavis.com:9091`
     } else if (config.env === 'testsite') {
-      wsconn = new WebSocket(`ws://www.gonnavis.com:9092`);
+      ws_url = `ws://www.gonnavis.com:9092`
     } else if (config.env === 'localsite') {
-      wsconn = new WebSocket(`ws://${location.hostname}:9091`);
+      ws_url = `ws://${location.hostname}:9091`
     }
+    wsconn = new WebSocket(ws_url);
+    wsconn.onopen = function() { all('wsconn_onopen') };
+    //when we got a message from a signaling server 
+    wsconn.onmessage = function(msg) { all('wsconn_onmessage', msg) };
+    wsconn.onerror = function(err) { console.log("Got error", err); };
+    fileInput.addEventListener('change', function() { all('fileInput_onchange') }, false);
+    sendFileButton.addEventListener('click', function() { all('sendFileButton_onclick') });
+    hangUpBtn.addEventListener("click", function() { all('hangUpBtn_onclick') });
+    //initiating a call 
+    callBtn.addEventListener("click", function() { all('callBtn_onclick') });
   } else if (etype === 'fileInput_onchange') {
     console.log('handleFileInputChange')
     let file = fileInput.files[0];
@@ -242,15 +243,12 @@ async function all(etype, arg) {
     if (callToUsername.length > 0) {
       connectedUser = callToUsername;
       // create an offer 
-      rtcconn.createOffer(function(offer) {
-        send({
-          type: "offer",
-          offer: offer
-        });
-        rtcconn.setLocalDescription(offer);
-      }, function(error) {
-        alert("Error when creating an offer");
+      let offer = await rtcconn.createOffer()
+      send({
+        type: "offer",
+        offer: offer
       });
+      rtcconn.setLocalDescription(offer);
     }
   } else if (etype === 'wsconn_onopen') {
     console.log("Connected to the signaling server");
@@ -285,9 +283,7 @@ async function all(etype, arg) {
         //creating data channel 
         sendChannel = rtcconn.createDataChannel("channel1", { reliable: true });
         sendChannel.binaryType = 'arraybuffer';
-        sendChannel.onopen = function() { all('sendChannel_onopen') };
-        sendChannel.onerror = function() { all('sendChannel_onerror') };
-        sendChannel.onclose = function() { all('sendChannel_onclose') };
+        sendChannel.onopen = function() { all('sendChannel_open') }
       }
     } else if (data.type === 'offer') {
       //when somebody sends us an offer 
@@ -337,11 +333,7 @@ async function all(etype, arg) {
       URL.revokeObjectURL(downloadAnchor.href);
       downloadAnchor.removeAttribute('href');
     }
-  } else if (etype === 'sendChannel_onopen') {
+  } else if (etype === 'sendChannel_open') {
     dom_file_wrap.style.display = 'block'
-  } else if (etype === 'sendChannel_onerror') {
-    console.log("Ooops...error:", error);
-  } else if (etype === 'sendChannel_onclose') {
-    console.log("data channel is closed");
   }
 }
