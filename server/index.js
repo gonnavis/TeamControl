@@ -1,5 +1,5 @@
 const config = require('../config.js')
-console.log(config)
+// console.log(config)
 //require our websocket library 
 var qs = require('querystring');
 var WebSocketServer = require('ws').Server;
@@ -38,7 +38,7 @@ var users = {};
 //when a user connects to our sever 
 wss.on('connection', function(connection) {
 
-  console.log("User connected");
+  // console.log("User connected");
 
   //when server gets a message from a connected user 
   connection.on('message', function(message) {
@@ -48,13 +48,13 @@ wss.on('connection', function(connection) {
     try {
       data = JSON.parse(message);
     } catch (e) {
-      console.log("Invalid JSON");
+      // console.log("Invalid JSON");
       data = {};
     }
 
     //when a user tries to login 
     if (data.type === "login") {
-      console.log("User logged", data.name);
+      // console.log("User logged", data.name);
       //if anyone is logged in with this username then refuse 
       if (users[data.name]) {
         sendTo(connection, {
@@ -74,7 +74,7 @@ wss.on('connection', function(connection) {
     } else if (data.type === 'offer') {
 
       //for ex. UserA wants to call UserB 
-      console.log("Sending offer to: ", data.name);
+      // console.log("Sending offer to: ", data.name);
 
       //if UserB exists then send him offer details 
       var conn = users[data.name];
@@ -91,7 +91,7 @@ wss.on('connection', function(connection) {
       }
 
     } else if (data.type === 'answer') {
-      console.log("Sending answer to: ", data.name);
+      // console.log("Sending answer to: ", data.name);
       //for ex. UserB answers UserA 
       var conn = users[data.name];
 
@@ -104,7 +104,7 @@ wss.on('connection', function(connection) {
       }
 
     } else if (data.type === 'candidate') {
-      console.log("Sending candidate to:", data.name);
+      // console.log("Sending candidate to:", data.name);
       var conn = users[data.name];
 
       if (conn != null) {
@@ -114,7 +114,7 @@ wss.on('connection', function(connection) {
         });
       }
     } else if (data.type === 'leave') {
-      console.log("Disconnecting from", data.name);
+      // console.log("Disconnecting from", data.name);
       var conn = users[data.name];
       conn.otherName = null;
 
@@ -140,7 +140,7 @@ wss.on('connection', function(connection) {
       delete users[connection.name];
 
       if (connection.otherName) {
-        console.log("Disconnecting from ", connection.otherName);
+        // console.log("Disconnecting from ", connection.otherName);
         var conn = users[connection.otherName];
         if (conn) conn.otherName = null;
 
