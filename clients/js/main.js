@@ -357,6 +357,7 @@ socket.on('message', function(message) {
     localConnection.setRemoteDescription(sessionDescription)
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
+      sdpMid: sdpMid, // !!! AND THIS LINE
       sdpMLineIndex: message.label,
       candidate: message.candidate
     });

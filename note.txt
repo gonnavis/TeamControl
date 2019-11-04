@@ -3,6 +3,9 @@ https://www.gonnavis.com/clients/
 
 不能同时打开三个浏览器!!!
 
+ref
+  \test\get_local_ip_address_by_webrtc.html
+
 console
   any client
     dataSendChannel.send('hello')
