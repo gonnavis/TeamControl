@@ -20,11 +20,12 @@ And prompt you to choose what screen part to share, choose the "your whole scree
 
 ## On the computer to controll
 
-Open browser (recommend Chrome) and access https://www.gonnavis.com/controller/ .
+Open browser (recommend Chrome) and access <del>https://www.gonnavis.com/controller/</del> ( I'm sorry that the server is not maintened recently, maybe re-maintained in the future. But you can run the server yourself, see below ).
 
 Then enter the room name you named before.
 
 OK, you can remote controll the mouse position!
+
 
 
 
@@ -37,3 +38,4 @@ npm install
 node server/
 
 ```
+May need some code replace from "gonnavis.com" to "your domain". And note that WebRTC need https server.
