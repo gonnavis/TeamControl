@@ -39,3 +39,6 @@ node server/
 
 ```
 May need some code replace from "gonnavis.com" to "your domain". And note that WebRTC need https server.
+
+## Similar Projects
+https://github.com/pavlobu/deskreen
